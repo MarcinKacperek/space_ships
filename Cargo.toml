@@ -1,0 +1,10 @@
+[package]
+name = "space_shooter"
+version = "0.1.0"
+authors = []
+edition = "2018"
+
+[dependencies]
+rand = "0.6"
+amethyst = "0.10.0"
+nphysics3d = "0.10.1"
