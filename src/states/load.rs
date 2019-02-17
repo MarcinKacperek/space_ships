@@ -19,9 +19,17 @@ use amethyst::{
 };
 use crate::components::data::UiAssets;
 
-pub struct LoadingState;
+pub struct LoadingState {
+    load_complete: bool
+}
 
 impl LoadingState {
+
+    fn new() -> Self {
+        return LoadingState {
+            load_complete: false
+        };
+    }
 
     fn load_sprite_sheet(world: &mut World) {
         let texture_handle = {
@@ -111,8 +119,15 @@ impl LoadingState {
 
 impl SimpleState for LoadingState {
 
-    fn on_start(&mut self, data: StateData<GameData>) -> SimpleTrans {
+    fn on_start(&mut self, data: StateData<GameData>) {
         LoadingState::load_ui_assets(data.world);
+
+    }
+
+    fn update(&mut self, _data: &mut StateData<GameData>) -> SimpleTrans {
+        if self.load_complete {
+            // TODO Trans::Switch Main Menu
+        }
 
         Trans::None
     }
