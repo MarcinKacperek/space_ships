@@ -29,7 +29,7 @@ use amethyst::{
 
 
 fn main() -> amethyst::Result<()> {
-    use crate::states::GameplayState;
+    use crate::states::LoadingState;
 
     amethyst::start_logger(Default::default());
 
@@ -66,7 +66,7 @@ fn main() -> amethyst::Result<()> {
         .with_bundle(TransformBundle::new())?
         .with_bundle(input_bundle)?
         .with_bundle(UiBundle::<String, String>::new())?;
-    let mut game = Application::new("./", GameplayState::new(), game_data)?;
+    let mut game = Application::new("./", LoadingState::new(), game_data)?;
 
     game.run();
 

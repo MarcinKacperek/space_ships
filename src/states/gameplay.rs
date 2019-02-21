@@ -94,42 +94,46 @@ impl GameplayState {
         });
     }
     
-    fn load_sprite_sheet(world: &mut World) -> SpriteSheetHandle {
-        let texture_handle = {
-            let loader = world.read_resource::<Loader>();
-            let texture_storage = world.read_resource::<AssetStorage<Texture>>();
+    // fn load_sprite_sheet(world: &mut World) -> SpriteSheetHandle {
+    //     let texture_handle = {
+    //         let loader = world.read_resource::<Loader>();
+    //         let texture_storage = world.read_resource::<AssetStorage<Texture>>();
 
-            loader.load(
-                "sprites/sheet.png",
-                PngFormat,
-                TextureMetadata::srgb_scale(),
-                (),
-                &texture_storage
-            )
-        };
+    //         loader.load(
+    //             "sprites/sheet.png",
+    //             PngFormat,
+    //             TextureMetadata::srgb_scale(),
+    //             (),
+    //             &texture_storage
+    //         )
+    //     };
 
-        let loader = world.read_resource::<Loader>();
-        let sprite_sheet_store = world.read_resource::<AssetStorage<SpriteSheet>>();
+    //     let loader = world.read_resource::<Loader>();
+    //     let sprite_sheet_store = world.read_resource::<AssetStorage<SpriteSheet>>();
 
-        return loader.load(
-            "sprites/sheet.ron",
-            SpriteSheetFormat,
-            texture_handle,
-            (),
-            &sprite_sheet_store
-        );
-    }
+    //     return loader.load(
+    //         "sprites/sheet.ron",
+    //         SpriteSheetFormat,
+    //         texture_handle,
+    //         (),
+    //         &sprite_sheet_store
+    //     );
+    // }
 
-    fn initialise_player_ship(world: &mut World, sprite_sheet: SpriteSheetHandle) {
+    fn initialise_player_ship(world: &mut World/*, sprite_sheet: SpriteSheetHandle*/) {
         let mut transform: Transform = Transform::default();
 
         let x = constants::ARENA_WIDTH / 2.0;
         let y = constants::PLAYER_SHIP_HEIGHT / 2.0;
         transform.set_xyz(x, y, 0.0);
 
-        let sprite_render = SpriteRender {
-            sprite_sheet: sprite_sheet,
-            sprite_number: 0
+        let sprite_render = {
+            let sprite_sheet = world.read_resource::<SpriteSheetHandle>();
+
+            SpriteRender {
+                sprite_sheet: sprite_sheet.clone(),
+                sprite_number: 0
+            }
         };
 
         world
@@ -175,14 +179,14 @@ impl GameplayState {
 impl SimpleState for GameplayState {
 
 	fn on_start(&mut self, data: StateData<GameData>) {
-        let world: &mut World = data.world;
+        let world = data.world;
         self.initialize_dispatcher(world);
         
-        let sprite_sheet_handle: SpriteSheetHandle = GameplayState::load_sprite_sheet(world);
+        // let sprite_sheet_handle = world.read_resource::<SpriteSheetHandle>();
     
-        GameplayState::initialise_player_ship(world, sprite_sheet_handle.clone());
+        GameplayState::initialise_player_ship(world/*, sprite_sheet_handle.clone()*/);
         GameplayState::initialise_camera(world);
-        world.add_resource(sprite_sheet_handle);
+        // world.add_resource(sprite_sheet_handle);
     }
 
     fn on_stop(&mut self, mut data: StateData<GameData>) {
