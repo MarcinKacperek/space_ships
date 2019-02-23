@@ -111,7 +111,7 @@ impl LoadingState {
          return world
             .read_resource::<Loader>()
             .load(
-                "ui/button.png",
+                "ui/button_hover.png",
                 PngFormat,
                 TextureMetadata::srgb_scale(),
                 (),
@@ -154,6 +154,8 @@ impl SimpleState for LoadingState {
     fn on_start(&mut self, data: StateData<GameData>) {
         LoadingState::load_ui_assets(data.world);
         LoadingState::load_sprite_sheet(data.world);
+
+        self.load_complete = true;
     }
 
     fn update(&mut self, _data: &mut StateData<GameData>) -> SimpleTrans {

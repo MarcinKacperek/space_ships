@@ -23,7 +23,10 @@ use amethyst::{
     },
     shrev::EventChannel
 };
-use crate::constants;
+use crate::{
+    components::data::UiAssets,
+    constants
+};
 
 pub struct PauseState {
     buttons: Vec<Entity>
@@ -38,37 +41,20 @@ impl PauseState {
     }
 
     fn create_menu(&mut self, world: &mut World) {
-        let font = world
-            .read_resource::<Loader>()
-            .load(
-                "ui/Recharge.ttf",
-                TtfFormat,
-                Default::default(),
-                (),
-                &world.read_resource()
-            );
+        let ui_assets = world.read_resource::<UiAssets>();
 
-        let image = world
-            .read_resource::<Loader>()
-            .load(
-                "ui/button.png",
-                PngFormat,
-                TextureMetadata::srgb_scale(),
-                (),
-                &world.read_resource::<AssetStorage<Texture>>()
-            );
-        
-        let x = 0.0;//constants::ARENA_WIDTH / 2.0 - constants::UI_BUTTON_WIDTH / 2.0;
-        let y = constants::UI_BUTTON_HEIGHT + constants::UI_BUTTON_HEIGHT / 4.0;//constants::ARENA_HEIGHT / 2.0 + constants::UI_BUTTON_HEIGHT / 4.0;
+        let x = 0.0;
+        let y = constants::UI_BUTTON_HEIGHT + constants::UI_BUTTON_HEIGHT / 4.0;
 
         let resume_button = UiButtonBuilder::new("resume_btn", "Resume")
             .with_position(x, y)
             .with_size(constants::UI_BUTTON_WIDTH, constants::UI_BUTTON_HEIGHT)
             .with_anchor(Anchor::Middle)
-            .with_font(font.clone())
+            .with_font(ui_assets.get_font())
             .with_text_color([0.95, 0.95, 0.95, 1.0])
             .with_font_size(constants::UI_BUTTON_FONT_SIZE)
-            .with_image(image.clone())
+            .with_image(ui_assets.get_btn_img())
+            .with_hover_image(ui_assets.get_btn_hover_img())
             .build_from_world(world);
         self.buttons.push(resume_button);
 
@@ -76,10 +62,11 @@ impl PauseState {
             .with_position(x, y - constants::UI_BUTTON_HEIGHT - constants::UI_BUTTON_HEIGHT / 4.0)
             .with_size(constants::UI_BUTTON_WIDTH, constants::UI_BUTTON_HEIGHT)
             .with_anchor(Anchor::Middle)
-            .with_font(font.clone())
+            .with_font(ui_assets.get_font())
             .with_text_color([0.95, 0.95, 0.95, 1.0])
             .with_font_size(constants::UI_BUTTON_FONT_SIZE)
-            .with_image(image.clone())
+            .with_image(ui_assets.get_btn_img())
+            .with_hover_image(ui_assets.get_btn_hover_img())
             .build_from_world(world);
         self.buttons.push(main_menu_button);
     }
