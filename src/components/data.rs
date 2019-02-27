@@ -4,7 +4,8 @@ use amethyst::{
     },
     ecs::{
         Component,
-        DenseVecStorage
+        DenseVecStorage,
+        Entity
     },
     renderer::{
         Texture
@@ -47,5 +48,33 @@ impl UiAssets {
 }
 
 impl Component for UiAssets {
+    type Storage = DenseVecStorage<Self>;
+}
+
+pub struct UiGameplayElements {
+    score_text: Entity,
+    score_value_text: Entity
+}
+
+impl UiGameplayElements {
+
+    pub fn new(score_text: Entity, score_value_text: Entity) -> Self {
+        return Self {
+            score_text,
+            score_value_text
+        };
+    }
+
+    pub fn get_score_text(&mut self) -> &mut Entity {
+        return &mut self.score_text;
+    }
+
+    pub fn get_score_value_text(&mut self) -> &mut Entity {
+        return &mut self.score_value_text;
+    }
+
+}
+
+impl Component for UiGameplayElements {
     type Storage = DenseVecStorage<Self>;
 }
