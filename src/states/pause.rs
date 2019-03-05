@@ -1,21 +1,9 @@
 use amethyst::{
-    assets::{
-        AssetStorage,
-        Loader
-    },
-    ecs::{
-        Entity
-    },
+    ecs::Entity,
     prelude::*,
-    renderer::{
-        PngFormat, 
-        Texture, 
-        TextureMetadata, 
-        VirtualKeyCode
-    },
+    renderer::VirtualKeyCode,
     input,
     ui::{
-        TtfFormat,
         UiTransform,
         UiButtonBuilder,
         UiEventType,
@@ -35,7 +23,7 @@ pub struct PauseState {
 impl PauseState {
 
     pub fn new() -> Self {
-        return PauseState {
+        return Self {
             buttons: Vec::new()
         };
     }
@@ -51,7 +39,7 @@ impl PauseState {
             .with_size(constants::UI_BUTTON_WIDTH, constants::UI_BUTTON_HEIGHT)
             .with_anchor(Anchor::Middle)
             .with_font(ui_assets.get_font())
-            .with_text_color([0.95, 0.95, 0.95, 1.0])
+            .with_text_color(constants::UI_FONT_COLOR)
             .with_font_size(constants::UI_BUTTON_FONT_SIZE)
             .with_image(ui_assets.get_btn_img())
             .with_hover_image(ui_assets.get_btn_hover_img())
@@ -63,7 +51,7 @@ impl PauseState {
             .with_size(constants::UI_BUTTON_WIDTH, constants::UI_BUTTON_HEIGHT)
             .with_anchor(Anchor::Middle)
             .with_font(ui_assets.get_font())
-            .with_text_color([0.95, 0.95, 0.95, 1.0])
+            .with_text_color(constants::UI_FONT_COLOR)
             .with_font_size(constants::UI_BUTTON_FONT_SIZE)
             .with_image(ui_assets.get_btn_img())
             .with_hover_image(ui_assets.get_btn_hover_img())

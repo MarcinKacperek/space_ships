@@ -5,7 +5,8 @@ mod pause;
 mod result;
 
 pub use {
-    load::LoadingState,
     gameplay::GameplayState,
+    load::LoadingState,
+    main_menu::MainMenuState,
     pause::PauseState
 };

@@ -6,6 +6,7 @@ mod bound_in_arena;
 mod destroy_out_of_arena;
 mod enemy_spawner;
 mod kill;
+mod gameplay_ui;
 
 pub use {
     player_ship_input::PlayerShipSystem,

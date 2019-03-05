@@ -16,7 +16,8 @@ use amethyst::{
 pub struct UiAssets {
     font: Handle<FontAsset>,
     btn_img: Handle<Texture>,
-    btn_hover_img: Handle<Texture>
+    btn_hover_img: Handle<Texture>,
+    life_img: Handle<Texture>
 }
 
 impl UiAssets {
@@ -24,12 +25,14 @@ impl UiAssets {
     pub fn new(
         font: Handle<FontAsset>,
         btn_img: Handle<Texture>,
-        btn_hover_img: Handle<Texture>
+        btn_hover_img: Handle<Texture>,
+        life_img: Handle<Texture>
     ) -> Self {
         return UiAssets {
             font,
             btn_img,
-            btn_hover_img
+            btn_hover_img,
+            life_img
         };
     }
 
@@ -43,6 +46,10 @@ impl UiAssets {
 
     pub fn get_btn_hover_img(&self) -> Handle<Texture> {
         return self.btn_hover_img.clone();
+    }
+
+    pub fn get_life_img(&self) -> Handle<Texture> {
+        return self.life_img.clone();
     }
 
 }
@@ -76,5 +83,13 @@ impl UiGameplayElements {
 }
 
 impl Component for UiGameplayElements {
+    type Storage = DenseVecStorage<Self>;
+}
+
+pub struct GameplaySessionData {
+    pub score: i32
+}
+
+impl Component for GameplaySessionData {
     type Storage = DenseVecStorage<Self>;
 }

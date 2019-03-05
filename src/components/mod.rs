@@ -30,8 +30,8 @@ pub struct Killable {
 }
 
 impl Killable {
-    pub fn new(health: i32) -> Killable {
-        return Killable {
+    pub fn new(health: i32) -> Self {
+        return Self {
             health
         };
     }
@@ -54,7 +54,7 @@ impl Component for Killable {
 pub struct SpaceShip {
     pub attack_cooldown: f64,
     pub last_attack_time: f64,
-    pub is_attacking: bool // Whether is shooting in this frame
+    pub is_attacking: bool
     // Missile (color)? Damage? Prefab?
 }
 
@@ -68,8 +68,8 @@ pub struct Missile {
 }
 
 impl Missile {
-    pub fn new(damage: i32, belongs_to_player: bool) -> Missile {
-        return Missile {
+    pub fn new(damage: i32, belongs_to_player: bool) -> Self {
+        return Self {
             damage,
             belongs_to_player
         };

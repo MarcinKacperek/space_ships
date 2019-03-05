@@ -1,8 +1,4 @@
 use amethyst::{
-    assets::{
-        AssetStorage,
-        Loader
-    },
     core::{
         nalgebra::Vector2,
         transform::Transform,
@@ -11,13 +7,8 @@ use amethyst::{
     input,
     prelude::*,
     renderer::{
-        PngFormat, 
         SpriteRender, 
-        SpriteSheet, 
-        SpriteSheetFormat, 
         SpriteSheetHandle, 
-        Texture, 
-        TextureMetadata, 
         Camera,
         Projection,
         VirtualKeyCode
@@ -25,8 +16,10 @@ use amethyst::{
     ecs::{
         Dispatcher,
         DispatcherBuilder,
-        Write,
-        Entity
+        Write
+    },
+    ui::{
+        UiText
     }
 };
 use crate::{
@@ -39,6 +32,10 @@ use crate::{
         tags::{
             PlayerShipTag,
             BoundInArenaTag
+        },
+        data::{
+            GameplaySessionData,
+            UiAssets
         }
     },
     systems,
@@ -49,7 +46,6 @@ use crate::{
 
 pub struct GameplayState {
     dispatcher: Option<Dispatcher<'static, 'static>>,
-    entities: Vec<Entity>,
     paused: bool
 }
 
@@ -58,7 +54,6 @@ impl GameplayState {
     pub fn new() -> Self {
         return GameplayState {
             dispatcher: None,
-            entities: Vec::new(),
             paused: false
         };
     }
@@ -67,7 +62,7 @@ impl GameplayState {
 
 impl GameplayState {
 
-    fn initialize_dispatcher(&mut self, world: &mut World) {
+    fn initialise_dispatcher(&mut self, world: &mut World) {
         let mut dispatcher_builder = DispatcherBuilder::new();
 
         dispatcher_builder.add(systems::PlayerShipSystem, "player_ship_system", &[]);
@@ -89,38 +84,10 @@ impl GameplayState {
     }
 
     fn terminate_entities(&mut self, world: &mut World) {
-        self.entities.drain(..).for_each(|entity| {
-            world.delete_entity(entity).expect("Failed to delete entity");
-        });
+        world.delete_all();
     }
-    
-    // fn load_sprite_sheet(world: &mut World) -> SpriteSheetHandle {
-    //     let texture_handle = {
-    //         let loader = world.read_resource::<Loader>();
-    //         let texture_storage = world.read_resource::<AssetStorage<Texture>>();
 
-    //         loader.load(
-    //             "sprites/sheet.png",
-    //             PngFormat,
-    //             TextureMetadata::srgb_scale(),
-    //             (),
-    //             &texture_storage
-    //         )
-    //     };
-
-    //     let loader = world.read_resource::<Loader>();
-    //     let sprite_sheet_store = world.read_resource::<AssetStorage<SpriteSheet>>();
-
-    //     return loader.load(
-    //         "sprites/sheet.ron",
-    //         SpriteSheetFormat,
-    //         texture_handle,
-    //         (),
-    //         &sprite_sheet_store
-    //     );
-    // }
-
-    fn initialise_player_ship(world: &mut World/*, sprite_sheet: SpriteSheetHandle*/) {
+    fn initialise_player_ship(world: &mut World) {
         let mut transform: Transform = Transform::default();
 
         let x = constants::ARENA_WIDTH / 2.0;
@@ -174,19 +141,37 @@ impl GameplayState {
             .build();
     }
 
+    fn initialise_gameplay_session_data(world: &mut World) {
+        let session_data = GameplaySessionData{ score: 0 };
+        world.add_resource(session_data);
+    }
+
+    fn initialise_ui(world: &mut World) {
+        let ui_assets = world.read_resource::<UiAssets>();
+        // Initialise score
+        let score_text = UiText::new(
+            ui_assets.get_font(),
+            String::from("Score:"),
+            [0.95, 0.95, 0.95, 1.0],
+            constants::UI_GAMEPLAY_FONT_SIZE
+        );
+        
+        // Initialise health
+
+    }
+
 }
 
 impl SimpleState for GameplayState {
 
 	fn on_start(&mut self, data: StateData<GameData>) {
         let world = data.world;
-        self.initialize_dispatcher(world);
+        self.initialise_dispatcher(world);
         
-        // let sprite_sheet_handle = world.read_resource::<SpriteSheetHandle>();
-    
-        GameplayState::initialise_player_ship(world/*, sprite_sheet_handle.clone()*/);
+        GameplayState::initialise_player_ship(world);
         GameplayState::initialise_camera(world);
-        // world.add_resource(sprite_sheet_handle);
+        GameplayState::initialise_gameplay_session_data(world);
+        GameplayState::initialise_ui(world);
     }
 
     fn on_stop(&mut self, mut data: StateData<GameData>) {
@@ -219,8 +204,6 @@ impl SimpleState for GameplayState {
     }
 
     fn update(&mut self, data: &mut StateData<GameData>) -> SimpleTrans {
-        // data.data.update(&mut data.world);
-
         if !self.paused {
             self.dispatcher.as_mut().unwrap().dispatch(&data.world.res);
         }
