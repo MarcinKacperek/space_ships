@@ -59,25 +59,15 @@ impl Component for UiAssets {
 }
 
 pub struct UiGameplayElements {
-    score_text: Entity,
-    score_value_text: Entity
+    pub score_value_text: Entity
 }
 
 impl UiGameplayElements {
 
-    pub fn new(score_text: Entity, score_value_text: Entity) -> Self {
+    pub fn new(score_value_text: Entity) -> Self {
         return Self {
-            score_text,
             score_value_text
         };
-    }
-
-    pub fn get_score_text(&mut self) -> &mut Entity {
-        return &mut self.score_text;
-    }
-
-    pub fn get_score_value_text(&mut self) -> &mut Entity {
-        return &mut self.score_value_text;
     }
 
 }

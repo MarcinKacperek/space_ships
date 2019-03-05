@@ -21,4 +21,4 @@ pub const UI_FONT_COLOR: [f32; 4] = [0.95, 0.95, 0.95, 1.0];
 pub const UI_BUTTON_WIDTH: f32 = 256.0;
 pub const UI_BUTTON_HEIGHT: f32 = 64.0;
 pub const UI_BUTTON_FONT_SIZE: f32 = 32.0;
-pub const UI_GAMEPLAY_FONT_SIZE: f32 = 24.0;
+pub const UI_GAMEPLAY_FONT_SIZE: f32 = 18.0;

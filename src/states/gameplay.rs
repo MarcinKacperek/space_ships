@@ -19,7 +19,9 @@ use amethyst::{
         Write
     },
     ui::{
-        UiText
+        Anchor,
+        UiText,
+        UiTransform
     }
 };
 use crate::{
@@ -35,7 +37,8 @@ use crate::{
         },
         data::{
             GameplaySessionData,
-            UiAssets
+            UiAssets,
+            UiGameplayElements
         }
     },
     systems,
@@ -147,15 +150,56 @@ impl GameplayState {
     }
 
     fn initialise_ui(world: &mut World) {
-        let ui_assets = world.read_resource::<UiAssets>();
+        let (font, life_img) = {
+            let ui_assets = world.read_resource::<UiAssets>();
+            (ui_assets.get_font(), ui_assets.get_life_img())
+        };
+
         // Initialise score
         let score_text = UiText::new(
-            ui_assets.get_font(),
+            font.clone(),
             String::from("Score:"),
-            [0.95, 0.95, 0.95, 1.0],
+            constants::UI_FONT_COLOR,
             constants::UI_GAMEPLAY_FONT_SIZE
         );
-        
+        let score_text_transform = UiTransform::new(
+            String::from("score_txt"),
+            Anchor::TopRight,
+            -100.0,
+            -constants::UI_GAMEPLAY_FONT_SIZE,
+            1.0,
+            80.0,
+            constants::UI_GAMEPLAY_FONT_SIZE,
+            1
+        );
+        world
+            .create_entity()
+            .with(score_text)
+            .with(score_text_transform)
+            .build();
+
+        let score_value_text = UiText::new(
+            font.clone(),
+            String::from("0"),
+            constants::UI_FONT_COLOR,
+            constants::UI_GAMEPLAY_FONT_SIZE
+        );
+        let score_value_text_transform = UiTransform::new(
+            String::from("score_value_txt"),
+            Anchor::TopRight,
+            -40.0,
+            -constants::UI_GAMEPLAY_FONT_SIZE,
+            1.0,
+            40.0,
+            constants::UI_GAMEPLAY_FONT_SIZE,
+            1
+        );
+        let score_value_text = world
+            .create_entity()
+            .with(score_value_text)
+            .with(score_value_text_transform)
+            .build();
+        world.add_resource(UiGameplayElements::new(score_value_text));
         // Initialise health
 
     }
