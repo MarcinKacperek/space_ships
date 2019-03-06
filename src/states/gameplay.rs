@@ -20,6 +20,7 @@ use amethyst::{
     },
     ui::{
         Anchor,
+        UiImage,
         UiText,
         UiTransform
     }
@@ -199,9 +200,71 @@ impl GameplayState {
             .with(score_value_text)
             .with(score_value_text_transform)
             .build();
-        world.add_resource(UiGameplayElements::new(score_value_text));
-        // Initialise health
+        // Initialise Life
+        let life_image = UiImage {
+            texture: life_img
+        };
+        let life_image_transform = UiTransform::new(
+            String::from("life_img"),
+            Anchor::BottomLeft,
+            25.0,
+            25.0,
+            1.0,
+            16.0,
+            16.0,
+            1
+        );
+        world
+            .create_entity()
+            .with(life_image)
+            .with(life_image_transform)
+            .build();
 
+        let life_text = UiText::new(
+            font.clone(),
+            String::from("x"),
+            constants::UI_FONT_COLOR,
+            constants::UI_GAMEPLAY_FONT_SIZE
+        );
+        let life_text_transform = UiTransform::new(
+            String::from("life_txt"),
+            Anchor::BottomLeft,
+            41.0,
+            25.0,
+            1.0,
+            8.0,
+            8.0,
+            1
+        );
+        world
+            .create_entity()
+            .with(life_text)
+            .with(life_text_transform)
+            .build();
+        
+        let life_value_text = UiText::new(
+            font.clone(),
+            constants::PLAYER_LIVES.to_string(),
+            constants::UI_FONT_COLOR,
+            constants::UI_GAMEPLAY_FONT_SIZE
+        );
+        let life_value_text_transform = UiTransform::new(
+            String::from("life_value_txt"),
+            Anchor::BottomLeft,
+            55.0,
+            25.0,
+            1.0,
+            16.0,
+            16.0,
+            1
+        );
+        let life_value_text = world
+            .create_entity()
+            .with(life_value_text)
+            .with(life_value_text_transform)
+            .build();
+
+        world.add_resource(UiGameplayElements::new(score_value_text, life_value_text));
     }
 
 }

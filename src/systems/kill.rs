@@ -4,6 +4,7 @@ use amethyst::{
         Join,
         WriteExpect,
         WriteStorage,
+        ReadExpect,
         ReadStorage,
         System
     },
@@ -28,11 +29,11 @@ impl<'s> System<'s> for KillSystem {
         ReadStorage<'s, PlayerShipTag>,
         WriteStorage<'s, UiText>,
         WriteExpect<'s, GameplaySessionData>,
-        WriteExpect<'s, UiGameplayElements>,
+        ReadExpect<'s, UiGameplayElements>,
         Entities<'s>
     );
 
-    fn run(&mut self, (mut killables, player_ship_tags, mut ui_texts, mut session_data, mut ui_elements, entities): Self::SystemData) {
+    fn run(&mut self, (mut killables, player_ship_tags, mut ui_texts, mut session_data, ui_elements, entities): Self::SystemData) {
         for (killable, entity, _) in (&mut killables, &entities, !&player_ship_tags).join() {
             if entities.is_alive(entity) && !killable.is_alive() {
                 // TODO add score to enemy

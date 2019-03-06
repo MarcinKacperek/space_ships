@@ -42,6 +42,10 @@ impl Killable {
         }
     }
 
+    pub fn get_health(&mut self) -> i32 {
+        return self.health;
+    }
+
     pub fn is_alive(&self) -> bool {
         return self.health > 0;
     }
