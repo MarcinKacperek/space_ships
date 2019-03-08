@@ -6,7 +6,10 @@ mod result;
 
 pub use {
     gameplay::GameplayState,
+    gameplay::GameplayNextState,
+    gameplay::GameState,
     load::LoadingState,
     main_menu::MainMenuState,
-    pause::PauseState
+    pause::PauseState,
+    result::ResultState
 };

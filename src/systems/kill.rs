@@ -8,6 +8,7 @@ use amethyst::{
         ReadStorage,
         System
     },
+    // prelude::*,
     ui::UiText
 };
 use crate::{
@@ -18,6 +19,10 @@ use crate::{
             GameplaySessionData,
             UiGameplayElements
         }
+    },
+    states::{
+        GameplayNextState,
+        GameState
     }
 };
 
@@ -30,11 +35,12 @@ impl<'s> System<'s> for KillSystem {
         WriteStorage<'s, UiText>,
         WriteExpect<'s, GameplaySessionData>,
         ReadExpect<'s, UiGameplayElements>,
+        WriteExpect<'s, GameplayNextState>,
         Entities<'s>
     );
 
-    fn run(&mut self, (mut killables, player_ship_tags, mut ui_texts, mut session_data, ui_elements, entities): Self::SystemData) {
-        for (killable, entity, _) in (&mut killables, &entities, !&player_ship_tags).join() {
+    fn run(&mut self, (mut killables, player_ship_tags, mut ui_texts, mut session_data, ui_elements, mut gameplay_next_state, entities): Self::SystemData) {
+        for (killable, entity) in (&mut killables, &entities).join() {
             if entities.is_alive(entity) && !killable.is_alive() {
                 // TODO add score to enemy
                 session_data.score += 1;
@@ -43,6 +49,10 @@ impl<'s> System<'s> for KillSystem {
                 }
 
                 let _ = entities.delete(entity);
+
+                if player_ship_tags.contains(entity) {
+                    gameplay_next_state.next_state = Some(GameState::Finished);
+                }
             }
         }
 

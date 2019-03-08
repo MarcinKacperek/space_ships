@@ -15,8 +15,7 @@ use amethyst::{
     },
     ecs::{
         Dispatcher,
-        DispatcherBuilder,
-        Write
+        DispatcherBuilder
     },
     ui::{
         Anchor,
@@ -44,13 +43,25 @@ use crate::{
     },
     systems,
     states::{
-        PauseState
+        PauseState,
+        ResultState
     }
 };
 
+#[derive(Clone)]
+pub enum GameState {
+    Running,
+    Paused,
+    Finished
+}
+
+pub struct GameplayNextState {
+    pub next_state: Option<GameState>
+}
+
 pub struct GameplayState {
     dispatcher: Option<Dispatcher<'static, 'static>>,
-    paused: bool
+    current_state: GameState
 }
 
 impl GameplayState {
@@ -58,7 +69,7 @@ impl GameplayState {
     pub fn new() -> Self {
         return GameplayState {
             dispatcher: None,
-            paused: false
+            current_state: GameState::Running
         };
     }
 
@@ -267,6 +278,10 @@ impl GameplayState {
         world.add_resource(UiGameplayElements::new(score_value_text, life_value_text));
     }
 
+    fn initialise_gameplay_state(world: &mut World) {
+        world.add_resource(GameplayNextState { next_state: None });
+    }
+
 }
 
 impl SimpleState for GameplayState {
@@ -279,6 +294,7 @@ impl SimpleState for GameplayState {
         GameplayState::initialise_camera(world);
         GameplayState::initialise_gameplay_session_data(world);
         GameplayState::initialise_ui(world);
+        GameplayState::initialise_gameplay_state(world);
     }
 
     fn on_stop(&mut self, mut data: StateData<GameData>) {
@@ -287,17 +303,33 @@ impl SimpleState for GameplayState {
     }
 
     fn on_pause(&mut self, data: StateData<GameData>) {
-        self.paused = true;
-        data.world.exec(|mut time: Write<Time>| {
-            time.set_time_scale(0.0);
-        });
+        let world = data.world;
+
+        let mut gameplay_next_state = world.write_resource::<GameplayNextState>();
+        gameplay_next_state.next_state = Some(GameState::Paused);
+
+        let mut time = world.write_resource::<Time>();
+        time.set_time_scale(0.0);
+
+        // self.paused = true;
+        // data.world.exec(|mut time: Write<Time>| {
+        //     time.set_time_scale(0.0);
+        // });
     }
 
     fn on_resume(&mut self, data: StateData<GameData>) {
-        self.paused = false;
-        data.world.exec(|mut time: Write<Time>| {
-            time.set_time_scale(1.0);
-        });
+        let world = data.world;
+
+        let mut gameplay_next_state = world.write_resource::<GameplayNextState>();
+        gameplay_next_state.next_state = Some(GameState::Running);
+
+        let mut time = world.write_resource::<Time>();
+        time.set_time_scale(1.0);
+
+        // self.paused = false;
+        // data.world.exec(|mut time: Write<Time>| {
+        //     time.set_time_scale(1.0);
+        // });
     }
 
     fn handle_event(&mut self, _: StateData<GameData>, event: StateEvent) -> SimpleTrans {
@@ -311,9 +343,23 @@ impl SimpleState for GameplayState {
     }
 
     fn update(&mut self, data: &mut StateData<GameData>) -> SimpleTrans {
-        if !self.paused {
-            self.dispatcher.as_mut().unwrap().dispatch(&data.world.res);
+        {
+            let mut gameplay_next_state = data.world.write_resource::<GameplayNextState>();
+            if let Some(next_state) = &gameplay_next_state.next_state {
+                self.current_state = next_state.clone();
+                gameplay_next_state.next_state = None;
+            }
         }
+        
+        match self.current_state {
+            GameState::Running => self.dispatcher.as_mut().unwrap().dispatch(&data.world.res),
+            GameState::Paused => {
+                // Do nothing
+            },
+            GameState::Finished => {
+                return Trans::Push(Box::new(ResultState::new()));
+            }
+        };
 
         return Trans::None;
     }
