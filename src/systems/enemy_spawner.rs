@@ -6,14 +6,13 @@ use amethyst::{
     },
     ecs:: {
         Entities,
-        // Join,
         Read,
         ReadExpect,
-        // ReadStorage,
         WriteStorage,
         System
     },
     renderer::{
+        Flipped,
         SpriteRender,
         SpriteSheetHandle
     }
@@ -48,6 +47,7 @@ impl<'s> System<'s> for EnemySpawnerSystem {
         WriteStorage<'s, EnemyTag>,
         WriteStorage<'s, SpriteRender>,
         WriteStorage<'s, DestroyOutOfArenaTag>,
+        WriteStorage<'s, Flipped>,
         ReadExpect<'s, SpriteSheetHandle>,
         Read<'s, Time>,
         Entities<'s>
@@ -64,6 +64,7 @@ impl<'s> System<'s> for EnemySpawnerSystem {
             mut enemy_tags,
             mut sprite_renders,
             mut destroy_out_of_arena_tags,
+            mut flipped,
             sprite_sheet_handle,
             time,
             entities
@@ -99,6 +100,7 @@ impl<'s> System<'s> for EnemySpawnerSystem {
                     .build_entity()
                     .with(transform, &mut transforms)
                     .with(sprite_render, &mut sprite_renders)
+                    .with(Flipped::Vertical, &mut flipped)
                     .with(moveable, &mut moveables)
                     .with(killable, &mut killables)
                     .with(rect, &mut rects)
@@ -110,6 +112,7 @@ impl<'s> System<'s> for EnemySpawnerSystem {
                     .build_entity()
                     .with(transform, &mut transforms)
                     .with(sprite_render, &mut sprite_renders)
+                    .with(Flipped::Vertical, &mut flipped)
                     .with(moveable, &mut moveables)
                     .with(killable, &mut killables)
                     .with(rect, &mut rects)
