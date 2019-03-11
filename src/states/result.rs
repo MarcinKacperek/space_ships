@@ -89,8 +89,9 @@ impl SimpleState for ResultState {
                                     let mut event_channel = data.world.write_resource::<EventChannel<TransEvent<GameData, StateEvent>>>();
                                     event_channel.single_write(Box::new(|| Trans::Pop));
                                     event_channel.single_write(Box::new(|| Trans::Pop));
-                                    
-                                    Trans::Push(Box::new(GameplayState::new()))
+                                    event_channel.single_write(Box::new(|| Trans::Push(Box::new(GameplayState::new()))));
+
+                                    Trans::None
                                 },
                                 "main_menu_btn" => {
                                     data.world
