@@ -1,7 +1,6 @@
 use amethyst::core::Transform;
 use crate::components::Rect;
  
- 
 pub fn is_aabb_collide(
     first_rect: &Rect,
     first_transform: &Transform,

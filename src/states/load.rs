@@ -1,8 +1,11 @@
+use std::fs;
+use serde_json;
 use amethyst::{
     assets::{
         AssetStorage,
         Handle,
-        Loader
+        Loader,
+        Prefab
     },
     ecs::Entity,
     prelude::*,
@@ -22,8 +25,14 @@ use amethyst::{
     }
 };
 use crate::{
-    components::data::UiAssets,
+    components::{
+        data::UiAssets
+    },
     constants,
+    prefabs::{
+        EnemyPrefabData,
+        EnemyPrefabs
+    },
     states::MainMenuState
 };
 
@@ -44,6 +53,7 @@ impl LoadingState {
     fn load_assets(&mut self, world: &mut World) {
         self.load_ui_assets(world);
         self.load_sprite_sheet(world);
+        self.load_prefabs(world);
 
         self.load_complete = true;
     }
@@ -54,7 +64,7 @@ impl LoadingState {
             let texture_storage = world.read_resource::<AssetStorage<Texture>>();
 
             loader.load(
-                "sprites/sheet.png",
+                "assets/sprites/sheet.png",
                 PngFormat,
                 TextureMetadata::srgb_scale(),
                 (),
@@ -67,7 +77,7 @@ impl LoadingState {
             let sprite_sheet_store = world.read_resource::<AssetStorage<SpriteSheet>>();
 
             loader.load(
-                "sprites/sheet.ron",
+                "assets/sprites/sheet.ron",
                 SpriteSheetFormat,
                 texture_handle,
                 (),
@@ -98,7 +108,7 @@ impl LoadingState {
         return world
             .read_resource::<Loader>()
             .load(
-                "ui/Recharge.ttf",
+                "assets/ui/Recharge.ttf",
                 TtfFormat,
                 Default::default(),
                 (),
@@ -110,7 +120,7 @@ impl LoadingState {
         return world
             .read_resource::<Loader>()
             .load(
-                "ui/button.png",
+                "assets/ui/button.png",
                 PngFormat,
                 TextureMetadata::srgb_scale(),
                 (),
@@ -122,7 +132,7 @@ impl LoadingState {
          return world
             .read_resource::<Loader>()
             .load(
-                "ui/button_hover.png",
+                "assets/ui/button_hover.png",
                 PngFormat,
                 TextureMetadata::srgb_scale(),
                 (),
@@ -134,7 +144,7 @@ impl LoadingState {
         return world
             .read_resource::<Loader>()
             .load(
-                "ui/life.png",
+                "assets/ui/life.png",
                 PngFormat,
                 TextureMetadata::srgb_scale(),
                 (),
@@ -167,6 +177,37 @@ impl LoadingState {
             .with(loading_text_transform)
             .build();
         self.loading_text = Some(loading_text);
+    }
+
+    fn load_prefabs(&mut self, world: &mut World) {
+        let paths = fs::read_dir("assets/prefabs/enemies").unwrap();
+
+        let mut small_enemy_prefabs: Vec<EnemyPrefabData> = Vec::new();
+        let mut medium_enemy_prefabs: Vec<EnemyPrefabData> = Vec::new();
+        let mut large_enemy_prefabs: Vec<EnemyPrefabData> = Vec::new();
+        for path in paths {
+            let path = path.unwrap().path();
+            let file_name = path.file_name().unwrap().to_os_string().into_string().unwrap();//display().to_string();
+            let file_content = fs::read_to_string(path).expect("Could not read file");
+            let prefab: EnemyPrefabData = serde_json::from_str(file_content.as_str()).expect("Could not parse json");
+
+            if file_name.starts_with("sm") {
+                small_enemy_prefabs.push(prefab);
+            } else if file_name.starts_with("md") {
+                medium_enemy_prefabs.push(prefab);
+            } else if file_name.starts_with("lg") {
+                large_enemy_prefabs.push(prefab);
+            }
+        }
+
+        let enemy_prefabs = EnemyPrefabs {
+            small_enemy_prefabs,
+            medium_enemy_prefabs,
+            large_enemy_prefabs
+        };
+
+        world.register::<Handle<Prefab<EnemyPrefabData>>>();
+        world.add_resource(enemy_prefabs);
     }
 
 }

@@ -1,8 +1,10 @@
-use amethyst::ecs::{
-    Component,
-    DenseVecStorage
+use amethyst::{
+    core::nalgebra::Vector2,
+    ecs::{
+        Component,
+        DenseVecStorage
+    }
 };
-use amethyst::core::nalgebra::Vector2;
 
 pub mod tags;
 pub mod data;
@@ -59,7 +61,6 @@ pub struct SpaceShip {
     pub attack_cooldown: f64,
     pub last_attack_time: f64,
     pub is_attacking: bool
-    // Missile (color)? Damage? Prefab?
 }
 
 impl Component for SpaceShip {
@@ -89,5 +90,18 @@ impl Missile {
 }
 
 impl Component for Missile {
+    type Storage = DenseVecStorage<Self>;
+}
+
+pub struct Cannon {
+    x_offset: f32,
+    y_offset: f32,
+    missile_width: f32,
+    missile_height: f32,
+    missile_speed: f32,
+    missile_sprite_index: usize
+}
+
+impl Component for Cannon {
     type Storage = DenseVecStorage<Self>;
 }

@@ -4,6 +4,10 @@ use amethyst::{
         transform::Transform,
         Time
     },
+    ecs::{
+        Dispatcher,
+        DispatcherBuilder,
+    },
     input,
     prelude::*,
     renderer::{
@@ -12,10 +16,6 @@ use amethyst::{
         Camera,
         Projection,
         VirtualKeyCode
-    },
-    ecs::{
-        Dispatcher,
-        DispatcherBuilder
     },
     ui::{
         Anchor,
@@ -32,8 +32,8 @@ use crate::{
         Killable,
         SpaceShip,
         tags::{
-            PlayerShipTag,
-            BoundInArenaTag
+            BoundInArenaTag,
+            PlayerShipTag
         },
         data::{
             GameplaySessionData,
@@ -278,7 +278,7 @@ impl GameplayState {
         world.add_resource(UiGameplayElements::new(score_value_text, life_value_text));
     }
 
-    fn initialise_gameplay_state(world: &mut World) {
+    fn initialise_gameplay_resources(world: &mut World) {
         world.add_resource(GameplayNextState { next_state: None });
     }
 
@@ -294,7 +294,7 @@ impl SimpleState for GameplayState {
         GameplayState::initialise_camera(world);
         GameplayState::initialise_gameplay_session_data(world);
         GameplayState::initialise_ui(world);
-        GameplayState::initialise_gameplay_state(world);
+        GameplayState::initialise_gameplay_resources(world);
     }
 
     fn on_stop(&mut self, mut data: StateData<GameData>) {
@@ -310,11 +310,6 @@ impl SimpleState for GameplayState {
 
         let mut time = world.write_resource::<Time>();
         time.set_time_scale(0.0);
-
-        // self.paused = true;
-        // data.world.exec(|mut time: Write<Time>| {
-        //     time.set_time_scale(0.0);
-        // });
     }
 
     fn on_resume(&mut self, data: StateData<GameData>) {
@@ -325,11 +320,6 @@ impl SimpleState for GameplayState {
 
         let mut time = world.write_resource::<Time>();
         time.set_time_scale(1.0);
-
-        // self.paused = false;
-        // data.world.exec(|mut time: Write<Time>| {
-        //     time.set_time_scale(1.0);
-        // });
     }
 
     fn handle_event(&mut self, _: StateData<GameData>, event: StateEvent) -> SimpleTrans {
@@ -344,12 +334,39 @@ impl SimpleState for GameplayState {
 
     fn update(&mut self, data: &mut StateData<GameData>) -> SimpleTrans {
         {
+            // Change state
             let mut gameplay_next_state = data.world.write_resource::<GameplayNextState>();
             if let Some(next_state) = &gameplay_next_state.next_state {
                 self.current_state = next_state.clone();
                 gameplay_next_state.next_state = None;
             }
         }
+
+        // {
+        //     // Spawn enemy
+        //     let enemy_to_spawn = {
+        //         let gameplay_next_enemy_spawn = data.world.read_resource::<GameplayNextEnemySpawn>();
+        //         gameplay_next_enemy_spawn.enemy_to_spawn.clone()
+        //     };
+
+        //     if let Some(enemy_to_spawn) = enemy_to_spawn {
+        //         let enemy = data.world
+        //             .create_entity()
+        //             .with(enemy_to_spawn)
+        //             .build();
+
+        //         let rects = &data.world.read_storage::<Rect>();
+        //         let rect = rects.get(enemy).unwrap();
+        //         let x = rand::thread_rng().gen_range(rect.width / 2.0, constants::ARENA_WIDTH - rect.width / 2.0);
+
+        //         let transforms = &mut data.world.write_storage::<Transform>();
+        //         let transform = transforms.get_mut(enemy).unwrap();
+        //         transform.set_xyz(x, constants::ARENA_HEIGHT + rect.height / 2.0, 0.0);
+
+        //         let mut gameplay_next_enemy_spawn = data.world.write_resource::<GameplayNextEnemySpawn>();
+        //         gameplay_next_enemy_spawn.enemy_to_spawn = None;
+        //     }
+        // }
         
         match self.current_state {
             GameState::Running => self.dispatcher.as_mut().unwrap().dispatch(&data.world.res),

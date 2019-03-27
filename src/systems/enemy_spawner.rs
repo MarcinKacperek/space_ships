@@ -1,8 +1,7 @@
 use amethyst::{
     core::{
         Transform,
-        Time,
-        nalgebra::Vector2
+        Time
     },
     ecs:: {
         Entities,
@@ -12,7 +11,6 @@ use amethyst::{
         System
     },
     renderer::{
-        Flipped,
         SpriteRender,
         SpriteSheetHandle
     }
@@ -29,12 +27,26 @@ use crate::{
             DestroyOutOfArenaTag
         }
     },
-    constants
+    constants,
+    prefabs::{
+        EnemyPrefabData,
+        EnemyPrefabs,
+        SimplePrefab
+    }
 };
 
 #[derive(Default)]
 pub struct EnemySpawnerSystem {
     next_spawn_time: f64
+}
+
+impl EnemySpawnerSystem {
+
+    fn get_random_enemy_prefab<'a>(enemy_prefabs: &'a Vec<EnemyPrefabData>, rng: &mut ThreadRng) -> &'a EnemyPrefabData {
+        let idx = rng.gen_range(0, enemy_prefabs.len());
+        return & enemy_prefabs.get(idx).unwrap();
+    }
+
 }
 
 impl<'s> System<'s> for EnemySpawnerSystem {
@@ -47,8 +59,8 @@ impl<'s> System<'s> for EnemySpawnerSystem {
         WriteStorage<'s, EnemyTag>,
         WriteStorage<'s, SpriteRender>,
         WriteStorage<'s, DestroyOutOfArenaTag>,
-        WriteStorage<'s, Flipped>,
         ReadExpect<'s, SpriteSheetHandle>,
+        ReadExpect<'s, EnemyPrefabs>,
         Read<'s, Time>,
         Entities<'s>
     );
@@ -56,78 +68,62 @@ impl<'s> System<'s> for EnemySpawnerSystem {
     fn run(
         &mut self, 
         (
-            mut transforms,
-            mut rects,
-            mut moveables,
-            mut killables,
-            mut space_ships,
-            mut enemy_tags,
-            mut sprite_renders,
-            mut destroy_out_of_arena_tags,
-            mut flipped,
+            transforms,
+            rects,
+            moveables,
+            killables,
+            space_ships,
+            enemy_tags,
+            sprite_renders,
+            destroy_out_of_arena_tags,
             sprite_sheet_handle,
+            enemy_prefabs,
             time,
             entities
         ): Self::SystemData
     ) {
         if self.next_spawn_time <= time.absolute_time_seconds() {
-            let mut transform = Transform::default();
-            let x = rand::thread_rng().gen_range(constants::ENEMY_SPAWNER_POINT_MIN_X, constants::ENEMY_SPAWNER_POINT_MAX_X);
-            transform.set_xyz(x, constants::ENEMY_SPAWNER_POINT_Y, 0.0);
-
-            // TODO: Refactor enemy type -> change to enum
-            let enemy_type = rand::thread_rng().gen_range(1, 5);
-
-            let sprite_render = SpriteRender {
-                sprite_sheet: sprite_sheet_handle.clone(),
-                sprite_number: enemy_type
+            let mut rng = rand::thread_rng();
+            let enemy_type: f64 = rng.gen();
+            let enemy_prefab = {
+                // TODO put enemy type chances somewhere else
+                // TOOD confusing and ugly, refactor
+                if enemy_type > 0.1 && enemy_prefabs.large_enemy_count() > 0 { // 10% chance
+                    Self::get_random_enemy_prefab(&enemy_prefabs.large_enemy_prefabs, &mut rng)
+                } else if enemy_type > 0.4 && enemy_prefabs.medium_enemy_count() > 0 { // 30% chance
+                    Self::get_random_enemy_prefab(&enemy_prefabs.medium_enemy_prefabs, &mut rng)
+                } else if enemy_prefabs.small_enemy_count() > 0 { // 60% chance
+                    Self::get_random_enemy_prefab(&enemy_prefabs.small_enemy_prefabs, &mut rng)
+                } else {
+                    panic!("enemy_spawner, no enemy prefabs were loaded!");
+                }
             };
 
-            let moveable = Moveable {
-                move_speed: rand::thread_rng().gen_range(50.0, 175.0),
-                direction: Vector2::new(0.0, -1.0)
-            };
+            // Position
+            let width = &enemy_prefab.width;
+            let height = &enemy_prefab.height;
+            let x = rng.gen_range(width / 2.0, constants::ARENA_WIDTH - width / 2.0);
+            // -1.0 so it's not deleted by out of bounds system
+            let y = constants::ARENA_HEIGHT + height - 1.0; 
 
-            let killable = Killable::new(2);
-
-            let rect = Rect {
-                width: constants::ENEMY_WIDTH,
-                height: constants::ENEMY_HEIGHT
-            };
-
-            if enemy_type == 1 {
-                entities
-                    .build_entity()
-                    .with(transform, &mut transforms)
-                    .with(sprite_render, &mut sprite_renders)
-                    .with(Flipped::Vertical, &mut flipped)
-                    .with(moveable, &mut moveables)
-                    .with(killable, &mut killables)
-                    .with(rect, &mut rects)
-                    .with(DestroyOutOfArenaTag, &mut destroy_out_of_arena_tags)
-                    .with(EnemyTag, &mut enemy_tags)
-                    .build();
-            } else {
-                entities
-                    .build_entity()
-                    .with(transform, &mut transforms)
-                    .with(sprite_render, &mut sprite_renders)
-                    .with(Flipped::Vertical, &mut flipped)
-                    .with(moveable, &mut moveables)
-                    .with(killable, &mut killables)
-                    .with(rect, &mut rects)
-                    .with(DestroyOutOfArenaTag, &mut destroy_out_of_arena_tags)
-                    .with(EnemyTag, &mut enemy_tags)
-                    .with(
-                        SpaceShip {
-                            attack_cooldown: 3.0,
-                            last_attack_time: 0.0,
-                            is_attacking: true
-                        }, 
-                        &mut space_ships
-                    )
-                    .build();
-            }
+            // Spawn enemy
+            let entity = entities.create();
+            enemy_prefab.add_to_entity(
+                entity, 
+                x,
+                y,
+                &mut (
+                    transforms,
+                    rects,
+                    moveables,
+                    killables,
+                    space_ships,
+                    enemy_tags,
+                    sprite_renders,
+                    destroy_out_of_arena_tags,
+                    sprite_sheet_handle
+                )
+            );
 
             // Update next spawn time
             let next_spawn_delay = rand::thread_rng().gen_range(constants::ENEMY_SPAWNER_MIN_DELAY, constants::ENEMY_SPAWNER_MAX_DELAY);

@@ -6,6 +6,7 @@ mod states;
 mod systems;
 mod utils;
 mod events;
+mod prefabs;
 
 use amethyst::{
     core::transform::TransformBundle,
@@ -35,7 +36,7 @@ fn main() -> amethyst::Result<()> {
 
     // Display config
     let path = format!(
-        "{}/resources/display_config.ron",
+        "{}/assets/config/display_config.ron",
         application_root_dir()
     );
     let config = DisplayConfig::load(&path);
@@ -51,7 +52,7 @@ fn main() -> amethyst::Result<()> {
     );
     // Input config
     let binding_path = format!(
-        "{}/resources/bindings_config.ron",
+        "{}/assets/config/bindings_config.ron",
         application_root_dir()
     );
     let input_bundle = InputBundle::<String, String>::new().with_bindings_from_file(binding_path)?;
