@@ -4,7 +4,7 @@ use amethyst::{
         nalgebra::Vector2
     },
     ecs::{
-        Entity,
+        Entities,
         ReadExpect,
         WriteStorage
     },
@@ -53,9 +53,9 @@ impl<'a> SimplePrefab<'a> for EnemyPrefabData {
         ReadExpect<'a, SpriteSheetHandle>
     );
 
-    fn add_to_entity(
+    fn create_entity(
         &self, 
-        entity: Entity, 
+        entities: &'a Entities, 
         x: f32,
         y: f32,
         (
@@ -70,35 +70,37 @@ impl<'a> SimplePrefab<'a> for EnemyPrefabData {
             sprite_sheet_handle
         ): &mut Self::SystemData
     ) {
+        let enemy_entity = entities.create();
+
         let mut transform = Transform::default();
         transform.set_xyz(x, y, 0.0);
 
         transforms
-            .insert(entity, transform)
+            .insert(enemy_entity, transform)
             .expect("Could not create Transform!");
         rects
-            .insert(entity, Rect {
+            .insert(enemy_entity, Rect {
                 width: self.width,
                 height: self.height
             })
             .expect("Could not create Rect!");
         moveables
-            .insert(entity, Moveable {
+            .insert(enemy_entity, Moveable {
                 move_speed: rand::thread_rng().gen_range(self.movement_speed_min, self.movement_speed_max),
                 direction: Vector2::new(0.0, -1.0)
             })
             .expect("Could not create Moveable!");
         killables
-            .insert(entity, Killable::new(self.health))
+            .insert(enemy_entity, Killable::new(self.health))
             .expect("Could not create Killable!");
         enemy_tags
-            .insert(entity, EnemyTag)
+            .insert(enemy_entity, EnemyTag)
             .expect("Could not create EnemyTag!");
         destroy_out_of_arena_tags
-            .insert(entity, DestroyOutOfArenaTag)
+            .insert(enemy_entity, DestroyOutOfArenaTag)
             .expect("Could not create DestroyOutOfArenaTag!");
         sprite_renders
-            .insert(entity, SpriteRender {
+            .insert(enemy_entity, SpriteRender {
                 sprite_sheet: sprite_sheet_handle.clone(),
                 sprite_number: self.sprite_index
             })
@@ -106,13 +108,15 @@ impl<'a> SimplePrefab<'a> for EnemyPrefabData {
 
         if let Some(attack_cooldown) = self.attack_cooldown {
             space_ships
-                .insert(entity, SpaceShip {
+                .insert(enemy_entity, SpaceShip {
                     attack_cooldown: attack_cooldown,
                     last_attack_time: 0.0,
                     is_attacking: true
                 })
                 .expect("Could not create SpaceShip!");
         }
+
+        // Create cannons
     }
 
 }

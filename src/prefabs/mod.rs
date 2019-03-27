@@ -1,6 +1,6 @@
 use amethyst::{
     ecs::{
-        Entity,
+        Entities,
         SystemData
     }
 };
@@ -36,6 +36,12 @@ impl EnemyPrefabs {
 pub trait SimplePrefab<'a> {
     type SystemData: SystemData<'a>;
 
-    fn add_to_entity(&self, entity: Entity, x: f32, y: f32, system_data: &mut Self::SystemData);
+    fn create_entity(
+        &self, 
+        entities: &'a Entities, 
+        x: f32, 
+        y: f32, 
+        system_data: &mut Self::SystemData
+    );
 
 }

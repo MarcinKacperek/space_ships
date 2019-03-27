@@ -107,9 +107,9 @@ impl<'s> System<'s> for EnemySpawnerSystem {
             let y = constants::ARENA_HEIGHT + height - 1.0; 
 
             // Spawn enemy
-            let entity = entities.create();
-            enemy_prefab.add_to_entity(
-                entity, 
+            // let entity = entities.create();
+            enemy_prefab.create_entity(
+                &entities, 
                 x,
                 y,
                 &mut (
