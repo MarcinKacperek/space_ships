@@ -5,5 +5,23 @@
     "width": 16.0,
     "height": 16.0,
     "health": 1,
-    "attack_cooldown": 3.0
+    "attack_cooldown": 3.0,
+    "cannon_prefabs": [
+        {
+            "x_offset": -2.0,
+            "y_offset": -4.0,
+            "missile_width": 1.0,
+            "missile_height": 8.0,
+            "missile_speed": 250.0,
+            "missile_sprite_index": 5
+        },
+        {
+            "x_offset": 2.0,
+            "y_offset": -4.0,
+            "missile_width": 1.0,
+            "missile_height": 8.0,
+            "missile_speed": 250.0,
+            "missile_sprite_index": 5
+        }
+    ]
 }

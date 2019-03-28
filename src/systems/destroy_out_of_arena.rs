@@ -11,7 +11,10 @@ use amethyst::{
 use crate::{
     components::{
         Rect,
-        tags::DestroyOutOfArenaTag
+        tags::{
+            DeleteEntityTag,
+            DestroyOutOfArenaTag
+        }
     },
     constants
 };
@@ -23,10 +26,20 @@ impl<'s> System<'s> for DestroyOutOfArenaSystem {
         Entities<'s>,
         WriteStorage<'s, Transform>,
         ReadStorage<'s, Rect>,
-        ReadStorage<'s, DestroyOutOfArenaTag>
+        ReadStorage<'s, DestroyOutOfArenaTag>,
+        WriteStorage<'s, DeleteEntityTag>
     );
 
-    fn run(&mut self, (entities, mut transforms, rects, destroy_out_of_arena_tags): Self::SystemData) {
+    fn run(
+        &mut self, 
+        (
+            entities, 
+            mut transforms, 
+            rects, 
+            destroy_out_of_arena_tags,
+            mut delete_entity_tags
+        ): Self::SystemData
+    ) {
         for (entity, transform, rect, _) in (&entities, &mut transforms, &rects, &destroy_out_of_arena_tags).join() {
             // Not using halves, it's ok to let entities leave arena a bit further
             let x = transform.translation().x;
@@ -37,49 +50,8 @@ impl<'s> System<'s> for DestroyOutOfArenaSystem {
                 y < -rect.height ||
                 y > constants::ARENA_HEIGHT + rect.height 
             {
-                let _ = entities.delete(entity);
+                let _ = delete_entity_tags.insert(entity, DeleteEntityTag);
             }
         }
     }
 }
-
-
-
-
-
-
-
-// use amethyst::{
-//     core::Transform,
-//     ecs::{
-//         Join,
-//         ReadStorage,
-//         WriteStorage,
-//         System
-//     }
-// };
-
-// use crate::{
-//     components::{
-//         Rect,
-//         tags::BoundInArenaTag
-//     },
-//     constants
-// };
-
-// pub struct MovementSystem;
-
-// impl<'s> System<'s> for MovementSystem {
-//     type SystemData = (
-//         ReadStorage<'s, Moveable>,
-//         WriteStorage<'s, Transform>,
-//         Read<'s, Time>
-//     );
-
-//     fn run(&mut self, (moveables, mut transforms, time): Self::SystemData) {
-//         for (moveable, transform) in (&moveables, &mut transforms).join() {
-//             let movement = moveable.direction * moveable.move_speed * time.delta_seconds();
-//             transform.translate_xyz(movement.x, movement.y, 0.0);
-//         }
-//     }
-// }

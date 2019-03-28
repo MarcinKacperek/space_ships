@@ -7,7 +7,6 @@ use amethyst::{
 };
 
 pub mod tags;
-pub mod data;
 
 pub struct Rect {
     pub width: f32,
@@ -38,10 +37,8 @@ impl Killable {
         };
     }
 
-    pub fn deal_damage(&mut self, damage: i32) {
-        if damage > 0 {
-            self.health = self.health - damage;
-        }
+    pub fn deal_damage(&mut self) {
+        self.health = self.health - 1;
     }
 
     pub fn get_health(&mut self) -> i32 {
@@ -58,8 +55,6 @@ impl Component for Killable {
 }
 
 pub struct SpaceShip {
-    pub attack_cooldown: f64,
-    pub last_attack_time: f64,
     pub is_attacking: bool
 }
 
@@ -68,22 +63,15 @@ impl Component for SpaceShip {
 }
 
 pub struct Missile {
-    damage: i32,
     belongs_to_player: bool
 }
 
 impl Missile {
-    pub fn new(damage: i32, belongs_to_player: bool) -> Self {
+    pub fn new(belongs_to_player: bool) -> Self {
         return Self {
-            damage,
             belongs_to_player
         };
     }
-
-    pub fn get_damage(&self) -> i32 {
-        return self.damage;
-    }
-
     pub fn belongs_to_player(&self) -> bool {
         return self.belongs_to_player;
     }
@@ -94,12 +82,14 @@ impl Component for Missile {
 }
 
 pub struct Cannon {
-    x_offset: f32,
-    y_offset: f32,
-    missile_width: f32,
-    missile_height: f32,
-    missile_speed: f32,
-    missile_sprite_index: usize
+    pub x_offset: f32,
+    pub y_offset: f32,
+    pub attack_cooldown: f64,
+    pub last_attack_time: f64,
+    pub missile_width: f32,
+    pub missile_height: f32,
+    pub missile_speed: f32,
+    pub missile_sprite_index: usize
 }
 
 impl Component for Cannon {

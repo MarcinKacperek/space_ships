@@ -30,3 +30,10 @@ pub struct DestroyOutOfArenaTag;
 impl Component for DestroyOutOfArenaTag {
     type Storage = NullStorage<Self>;
 }
+
+#[derive(Default)]
+pub struct DeleteEntityTag;
+
+impl Component for DeleteEntityTag {
+    type Storage = NullStorage<Self>;
+}

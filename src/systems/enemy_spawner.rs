@@ -1,5 +1,6 @@
 use amethyst::{
     core::{
+        Parent,
         Transform,
         Time
     },
@@ -18,6 +19,7 @@ use amethyst::{
 use rand::prelude::*;
 use crate::{
     components::{
+        Cannon,
         Rect,
         Moveable,
         SpaceShip,
@@ -56,9 +58,11 @@ impl<'s> System<'s> for EnemySpawnerSystem {
         WriteStorage<'s, Moveable>,
         WriteStorage<'s, Killable>,        
         WriteStorage<'s, SpaceShip>,
+        WriteStorage<'s, Cannon>,
         WriteStorage<'s, EnemyTag>,
         WriteStorage<'s, SpriteRender>,
         WriteStorage<'s, DestroyOutOfArenaTag>,
+        WriteStorage<'s, Parent>,
         ReadExpect<'s, SpriteSheetHandle>,
         ReadExpect<'s, EnemyPrefabs>,
         Read<'s, Time>,
@@ -73,9 +77,11 @@ impl<'s> System<'s> for EnemySpawnerSystem {
             moveables,
             killables,
             space_ships,
+            cannons,
             enemy_tags,
             sprite_renders,
             destroy_out_of_arena_tags,
+            parents,
             sprite_sheet_handle,
             enemy_prefabs,
             time,
@@ -117,9 +123,11 @@ impl<'s> System<'s> for EnemySpawnerSystem {
                     moveables,
                     killables,
                     space_ships,
+                    cannons,
                     enemy_tags,
                     sprite_renders,
                     destroy_out_of_arena_tags,
+                    parents,
                     sprite_sheet_handle
                 )
             );

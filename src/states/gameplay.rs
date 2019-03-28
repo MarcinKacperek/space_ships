@@ -1,6 +1,7 @@
 use amethyst::{
     core::{
         nalgebra::Vector2,
+        Parent,
         transform::Transform,
         Time
     },
@@ -27,6 +28,7 @@ use amethyst::{
 use crate::{
     constants,
     components::{
+        Cannon,
         Moveable,
         Rect,
         Killable,
@@ -79,6 +81,8 @@ impl GameplayState {
         dispatcher_builder.add(systems::DestroyOutOfArenaSystem, "destroy_out_of_arena_system", &["bound_in_arena_system"]);
         dispatcher_builder.add(systems::KillSystem, "kill_system", &["missile_system"]);
         dispatcher_builder.add(systems::EnemySpawnerSystem::default(), "enemy_spawner", &["destroy_out_of_arena_system"]);
+        dispatcher_builder.add(systems::ClearCannonsSystem, "clear_cannons", &["kill_system", "destroy_out_of_arena_system"]);
+        dispatcher_builder.add(systems::DeleteEntitiesSystem, "delete_entities", &["clear_cannons"]);
 
         let mut dispatcher = dispatcher_builder.build();
         dispatcher.setup(&mut world.res);
@@ -109,7 +113,7 @@ impl GameplayState {
             }
         };
 
-        world
+        let player_entity = world
             .create_entity()
             .with(sprite_render)
             .with(transform)
@@ -125,9 +129,23 @@ impl GameplayState {
             })
             .with(Killable::new(3))
             .with(SpaceShip {
+                is_attacking: false
+            })
+            .build();
+        world
+            .create_entity()
+            .with(Parent {
+                entity: player_entity
+            })
+            .with(Cannon {
+                x_offset: 0.0,
+                y_offset: 16.0,
                 attack_cooldown: 0.5,
                 last_attack_time: 0.0,
-                is_attacking: false
+                missile_width: 1.0,
+                missile_height: 8.0,
+                missile_speed: 500.0,
+                missile_sprite_index: 5
             })
             .build();
     }

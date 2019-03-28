@@ -1,5 +1,6 @@
 use amethyst::{
     core::{
+        Parent,
         Transform,
         nalgebra::Vector2
     },
@@ -15,6 +16,7 @@ use amethyst::{
 };
 use crate::{
     components::{
+        Cannon,
         Killable,
         Moveable,
         Rect,
@@ -30,6 +32,16 @@ use rand::prelude::*;
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize)]
+pub struct CannonPrefabData {
+    pub x_offset: f32,
+    pub y_offset: f32,
+    pub missile_width: f32,
+    pub missile_height: f32,
+    pub missile_speed: f32,
+    pub missile_sprite_index: usize
+}
+
+#[derive(Serialize, Deserialize)]
 pub struct EnemyPrefabData {
     pub sprite_index: usize,
     pub movement_speed_min: f32,
@@ -37,7 +49,8 @@ pub struct EnemyPrefabData {
     pub width: f32,
     pub height: f32,
     pub health: i32,
-    pub attack_cooldown: Option<f64>
+    pub attack_cooldown: Option<f64>,
+    pub cannon_prefabs: Option<Vec<CannonPrefabData>>
 }
 
 impl<'a> SimplePrefab<'a> for EnemyPrefabData {
@@ -47,9 +60,11 @@ impl<'a> SimplePrefab<'a> for EnemyPrefabData {
         WriteStorage<'a, Moveable>,
         WriteStorage<'a, Killable>,
         WriteStorage<'a, SpaceShip>,
+        WriteStorage<'a, Cannon>,
         WriteStorage<'a, EnemyTag>,
         WriteStorage<'a, SpriteRender>,
         WriteStorage<'a, DestroyOutOfArenaTag>,
+        WriteStorage<'a, Parent>,
         ReadExpect<'a, SpriteSheetHandle>
     );
 
@@ -64,9 +79,11 @@ impl<'a> SimplePrefab<'a> for EnemyPrefabData {
             ref mut moveables,
             ref mut killables,
             ref mut space_ships,
+            ref mut cannons,
             ref mut enemy_tags,
             ref mut sprite_renders,
             ref mut destroy_out_of_arena_tags,
+            ref mut parents,
             sprite_sheet_handle
         ): &mut Self::SystemData
     ) {
@@ -105,18 +122,39 @@ impl<'a> SimplePrefab<'a> for EnemyPrefabData {
                 sprite_number: self.sprite_index
             })
             .expect("Could not create SpriteRender!");
+        space_ships
+            .insert(enemy_entity, SpaceShip {
+                is_attacking: true
+            })
+            .expect("Could not create SpaceShip!");
 
-        if let Some(attack_cooldown) = self.attack_cooldown {
-            space_ships
-                .insert(enemy_entity, SpaceShip {
-                    attack_cooldown: attack_cooldown,
-                    last_attack_time: 0.0,
-                    is_attacking: true
-                })
-                .expect("Could not create SpaceShip!");
-        }
 
         // Create cannons
+        if let Some(cannon_prefabs) = &self.cannon_prefabs {
+            let attack_cooldown = self.attack_cooldown
+                .expect("Attack cooldown is required if cannons are specified!");
+
+            for cannon_prefab in cannon_prefabs {
+                let cannon_entity = entities.create();
+                cannons
+                    .insert(cannon_entity, Cannon {
+                        x_offset: cannon_prefab.x_offset,
+                        y_offset: cannon_prefab.y_offset,
+                        attack_cooldown: attack_cooldown,
+                        last_attack_time: 0.0,
+                        missile_width: cannon_prefab.missile_width,
+                        missile_height: cannon_prefab.missile_height,
+                        missile_speed: cannon_prefab.missile_speed,
+                        missile_sprite_index: cannon_prefab.missile_sprite_index
+                    })
+                    .expect("Could not create Cannon!");
+                parents
+                    .insert(cannon_entity, Parent {
+                        entity: enemy_entity
+                    })
+                    .expect("Could not create Parent!");
+            }
+        }
     }
 
 }
