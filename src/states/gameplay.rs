@@ -34,16 +34,14 @@ use crate::{
         tags::{
             BoundInArenaTag,
             PlayerShipTag
-        },
-        data::{
-            GameplaySessionData,
-            UiAssets,
-            UiGameplayElements
         }
     },
     resources::{
         GameplayNextState,
-        GameState
+        GameplaySessionData,
+        GameState,
+        UiAssets,
+        UiGameplayElements
     },
     systems,
     states::{

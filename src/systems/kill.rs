@@ -14,15 +14,13 @@ use amethyst::{
 use crate::{
     components::{
         Killable,
-        tags::PlayerShipTag,
-        data::{
-            GameplaySessionData,
-            UiGameplayElements
-        }
+        tags::PlayerShipTag
     },
     resources::{
         GameplayNextState,
-        GameState
+        GameplaySessionData,
+        GameState,
+        UiGameplayElements
     }
 };
 

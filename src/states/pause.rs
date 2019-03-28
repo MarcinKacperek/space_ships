@@ -12,7 +12,7 @@ use amethyst::{
     shrev::EventChannel
 };
 use crate::{
-    components::data::UiAssets,
+    resources::UiAssets,
     constants
 };
 

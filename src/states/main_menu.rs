@@ -10,10 +10,8 @@ use amethyst::{
     }
 };
 use crate::{
-    components::{
-        data::UiAssets
-    },
     constants,
+    resources::UiAssets,
     states::GameplayState
 };
 

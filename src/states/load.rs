@@ -25,14 +25,12 @@ use amethyst::{
     }
 };
 use crate::{
-    components::{
-        data::UiAssets
-    },
     constants,
     prefabs::{
         EnemyPrefabData,
         EnemyPrefabs
     },
+    resources::UiAssets,
     states::MainMenuState
 };
 

@@ -18,9 +18,9 @@ use crate::{
         tags::{
             PlayerShipTag,
             EnemyTag
-        },
-        data::UiGameplayElements
+        }
     },
+    resources::UiGameplayElements,
     utils
 };
 
