@@ -2,11 +2,12 @@ extern crate amethyst;
 
 mod components;
 mod constants;
+mod events;
+mod prefabs;
+mod resources;
 mod states;
 mod systems;
 mod utils;
-mod events;
-mod prefabs;
 
 use amethyst::{
     core::transform::TransformBundle,

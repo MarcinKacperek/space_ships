@@ -41,23 +41,16 @@ use crate::{
             UiGameplayElements
         }
     },
+    resources::{
+        GameplayNextState,
+        GameState
+    },
     systems,
     states::{
         PauseState,
         ResultState
     }
 };
-
-#[derive(Clone)]
-pub enum GameState {
-    Running,
-    Paused,
-    Finished
-}
-
-pub struct GameplayNextState {
-    pub next_state: Option<GameState>
-}
 
 pub struct GameplayState {
     dispatcher: Option<Dispatcher<'static, 'static>>,
@@ -341,32 +334,6 @@ impl SimpleState for GameplayState {
                 gameplay_next_state.next_state = None;
             }
         }
-
-        // {
-        //     // Spawn enemy
-        //     let enemy_to_spawn = {
-        //         let gameplay_next_enemy_spawn = data.world.read_resource::<GameplayNextEnemySpawn>();
-        //         gameplay_next_enemy_spawn.enemy_to_spawn.clone()
-        //     };
-
-        //     if let Some(enemy_to_spawn) = enemy_to_spawn {
-        //         let enemy = data.world
-        //             .create_entity()
-        //             .with(enemy_to_spawn)
-        //             .build();
-
-        //         let rects = &data.world.read_storage::<Rect>();
-        //         let rect = rects.get(enemy).unwrap();
-        //         let x = rand::thread_rng().gen_range(rect.width / 2.0, constants::ARENA_WIDTH - rect.width / 2.0);
-
-        //         let transforms = &mut data.world.write_storage::<Transform>();
-        //         let transform = transforms.get_mut(enemy).unwrap();
-        //         transform.set_xyz(x, constants::ARENA_HEIGHT + rect.height / 2.0, 0.0);
-
-        //         let mut gameplay_next_enemy_spawn = data.world.write_resource::<GameplayNextEnemySpawn>();
-        //         gameplay_next_enemy_spawn.enemy_to_spawn = None;
-        //     }
-        // }
         
         match self.current_state {
             GameState::Running => self.dispatcher.as_mut().unwrap().dispatch(&data.world.res),

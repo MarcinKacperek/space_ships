@@ -20,7 +20,7 @@ use crate::{
             UiGameplayElements
         }
     },
-    states::{
+    resources::{
         GameplayNextState,
         GameState
     }
