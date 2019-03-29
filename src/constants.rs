@@ -1,8 +1,8 @@
 pub const ARENA_WIDTH: f32 = 750.0;//375.0;
 pub const ARENA_HEIGHT: f32 = 900.0;//450.0;
 
-pub const PLAYER_SHIP_WIDTH: f32 = 32.0;
-pub const PLAYER_SHIP_HEIGHT: f32 = 32.0;
+// pub const PLAYER_SHIP_WIDTH: f32 = 32.0;
+// pub const PLAYER_SHIP_HEIGHT: f32 = 32.0;
 
 // pub const MISSILE_WIDTH: f32 = 1.0;
 // pub const MISSILE_HEIGHT: f32 = 8.0;

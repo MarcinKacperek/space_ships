@@ -48,6 +48,7 @@ pub struct EnemyPrefabData {
     pub movement_speed_max: f32,
     pub width: f32,
     pub height: f32,
+    pub scale: f32,
     pub health: i32,
     pub attack_cooldown: Option<f64>,
     pub cannon_prefabs: Option<Vec<CannonPrefabData>>
@@ -67,6 +68,21 @@ impl<'a> SimplePrefab<'a> for EnemyPrefabData {
         WriteStorage<'a, Parent>,
         ReadExpect<'a, SpriteSheetHandle>
     );
+
+    fn init(&mut self) {
+        // Apply scale to all dimensions
+        self.width = self.width * self.scale;
+        self.height = self.height * self.scale;
+
+        if let Some(cannon_prefabs) = &mut self.cannon_prefabs {
+            for cannon in cannon_prefabs {
+                cannon.x_offset = cannon.x_offset * self.scale;
+                cannon.y_offset = cannon.y_offset * self.scale;
+                cannon.missile_width = cannon.missile_width * self.scale;
+                cannon.missile_height = cannon.missile_height * self.scale;
+            }
+        }
+    }
 
     fn create_entity(
         &self, 
@@ -91,6 +107,7 @@ impl<'a> SimplePrefab<'a> for EnemyPrefabData {
 
         let mut transform = Transform::default();
         transform.set_xyz(x, y, 0.0);
+        transform.set_scale(self.scale, self.scale, 1.0);
 
         transforms
             .insert(enemy_entity, transform)

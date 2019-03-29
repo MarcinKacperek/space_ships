@@ -1,0 +1,28 @@
+{
+    "sprite_index": 1,
+    "movement_speed_min": 20.0,
+    "movement_speed_max": 50.0,
+    "width": 170.0,
+    "height": 150.0,
+    "scale": 0.4,
+    "health": 10,
+    "attack_cooldown": 2.5,
+    "cannon_prefabs": [
+        {
+            "x_offset": -28.0,
+            "y_offset": -50.0,
+            "missile_width": 13.0,
+            "missile_height": 37.0,
+            "missile_speed": 450.0,
+            "missile_sprite_index": 17
+        },
+        {
+            "x_offset": 28.0,
+            "y_offset": -50.0,
+            "missile_width": 13.0,
+            "missile_height": 37.0,
+            "missile_speed": 450.0,
+            "missile_sprite_index": 17
+        }
+    ]
+}

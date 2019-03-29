@@ -28,7 +28,8 @@ use crate::{
     constants,
     prefabs::{
         EnemyPrefabData,
-        EnemyPrefabs
+        EnemyPrefabs,
+        SimplePrefab
     },
     resources::UiAssets,
     states::MainMenuState
@@ -62,7 +63,7 @@ impl LoadingState {
             let texture_storage = world.read_resource::<AssetStorage<Texture>>();
 
             loader.load(
-                "assets/sprites/sheet.png",
+                "assets/sprites/spritesheet.png",
                 PngFormat,
                 TextureMetadata::srgb_scale(),
                 (),
@@ -75,7 +76,7 @@ impl LoadingState {
             let sprite_sheet_store = world.read_resource::<AssetStorage<SpriteSheet>>();
 
             loader.load(
-                "assets/sprites/sheet.ron",
+                "assets/sprites/spritesheet.ron",
                 SpriteSheetFormat,
                 texture_handle,
                 (),
@@ -187,7 +188,8 @@ impl LoadingState {
             let path = path.unwrap().path();
             let file_name = path.file_name().unwrap().to_os_string().into_string().unwrap();//display().to_string();
             let file_content = fs::read_to_string(path).expect("Could not read file");
-            let prefab: EnemyPrefabData = serde_json::from_str(file_content.as_str()).expect("Could not parse json");
+            let mut prefab: EnemyPrefabData = serde_json::from_str(file_content.as_str()).expect("Could not parse json");
+            prefab.init();
 
             if file_name.starts_with("sm") {
                 small_enemy_prefabs.push(prefab);

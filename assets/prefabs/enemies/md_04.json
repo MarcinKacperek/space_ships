@@ -1,0 +1,9 @@
+{
+    "sprite_index": 6,
+    "movement_speed_min": 250.0,
+    "movement_speed_max": 350.0,
+    "width": 94.0,
+    "height": 146.0,
+    "scale": 0.4,
+    "health": 2
+}

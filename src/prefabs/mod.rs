@@ -36,6 +36,10 @@ impl EnemyPrefabs {
 pub trait SimplePrefab<'a> {
     type SystemData: SystemData<'a>;
 
+    fn init(&mut self) {
+        // Default no action
+    }
+
     fn create_entity(
         &self, 
         entities: &'a Entities, 

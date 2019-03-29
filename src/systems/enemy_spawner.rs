@@ -94,9 +94,9 @@ impl<'s> System<'s> for EnemySpawnerSystem {
             let enemy_prefab = {
                 // TODO put enemy type chances somewhere else
                 // TOOD confusing and ugly, refactor
-                if enemy_type > 0.1 && enemy_prefabs.large_enemy_count() > 0 { // 10% chance
+                if enemy_type < 0.1 && enemy_prefabs.large_enemy_count() > 0 { // 10% chance
                     Self::get_random_enemy_prefab(&enemy_prefabs.large_enemy_prefabs, &mut rng)
-                } else if enemy_type > 0.4 && enemy_prefabs.medium_enemy_count() > 0 { // 30% chance
+                } else if enemy_type < 0.4 && enemy_prefabs.medium_enemy_count() > 0 { // 30% chance
                     Self::get_random_enemy_prefab(&enemy_prefabs.medium_enemy_prefabs, &mut rng)
                 } else if enemy_prefabs.small_enemy_count() > 0 { // 60% chance
                     Self::get_random_enemy_prefab(&enemy_prefabs.small_enemy_prefabs, &mut rng)

@@ -75,6 +75,7 @@ impl<'s> System<'s> for ShootingSystem {
             if space_ship.is_attacking && cannon.last_attack_time + cannon.attack_cooldown <= time.absolute_time_seconds() {
                 let mut transform = transforms.get_mut(parent.entity).unwrap().clone();
                 transform.translate_xyz(cannon.x_offset, cannon.y_offset, 0.0);
+                // TODO! Transform has modified scale, it affects missile size!
                 let is_player = player_ship_tags.contains(parent.entity);
                 let direction_y = if is_player {
                     1.0
@@ -113,45 +114,5 @@ impl<'s> System<'s> for ShootingSystem {
                 cannon.last_attack_time = time.absolute_time_seconds();
             }
         }
-
-        // for (space_ship, entity) in (&space_ships, &entities).join() {
-        //     if space_ship.is_attacking && space_ship.last_attack_time + space_ship.attack_cooldown <= time.absolute_timeseconds() {
-        //         let transform = transforms.get(entity).unwrap().clone();
-        //         let sprite_render = SpriteRender {
-        //             sprite_sheet: sprite_sheet_handle.clone(),
-        //             sprite_number: 5
-        //         };
-        //         let is_player = player_ship_tags.contains(entity);
-        //         let direction_y = if is_player {
-        //             1.0
-        //         } else {
-        //             -1.0
-        //         };
-
-        //         entities
-        //             .build_entity()
-        //             .with(transform, &mut transforms)
-        //             .with(sprite_render, &mut sprite_renders)
-        //             .with(Missile::new(is_player), &mut missiles)
-        //             .with(
-        //                 Moveable {
-        //                     move_speed: 500.0,
-        //                     direction: Vector2::new(0.0, direction_y)
-        //                 }, 
-        //                 &mut moveables
-        //             )
-        //             .with(
-        //                 Rect {
-        //                     width: constants::MISSILE_WIDTH,
-        //                     height: constants::MISSILE_HEIGHT
-        //                 },
-        //                 &mut rects
-        //             )
-        //             .with(DestroyOutOfArenaTag, &mut destroy_out_of_arena_tags)
-        //             .build();
-
-        //         space_ship.last_attack_time = time.absolute_time_seconds();
-        //     }
-        // }        
     }
 }

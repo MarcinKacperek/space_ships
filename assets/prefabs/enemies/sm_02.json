@@ -1,9 +1,9 @@
 {
-    "sprite_index": 10,
+    "sprite_index": 11,
     "movement_speed_min": 10.0,
     "movement_speed_max": 50.0,
     "width": 45.0,
     "height": 40.0,
     "scale": 0.4,
-    "health": 1
+    "health": 2
 }

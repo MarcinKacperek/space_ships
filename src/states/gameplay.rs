@@ -100,9 +100,19 @@ impl GameplayState {
     fn initialise_player_ship(world: &mut World) {
         let mut transform: Transform = Transform::default();
 
+        let player_scale = 0.4;
+        let player_width = 99.0 * player_scale;
+        let player_height = 75.0 * player_scale;
+
+        let missile_x_offset = 0.0;
+        let missile_y_offset = player_height / 2.0;
+        let missile_width = 9.0 * player_scale;
+        let missile_height = 37.0 * player_scale;
+
         let x = constants::ARENA_WIDTH / 2.0;
-        let y = constants::PLAYER_SHIP_HEIGHT / 2.0;
+        let y = player_height / 2.0;
         transform.set_xyz(x, y, 0.0);
+        transform.set_scale(player_scale, player_scale, 1.0);
 
         let sprite_render = {
             let sprite_sheet = world.read_resource::<SpriteSheetHandle>();
@@ -120,8 +130,8 @@ impl GameplayState {
             .with(PlayerShipTag)
             .with(BoundInArenaTag)
             .with(Rect {
-                width: constants::PLAYER_SHIP_WIDTH,
-                height: constants::PLAYER_SHIP_HEIGHT
+                width: player_width,
+                height: player_height
             })
             .with(Moveable {
                 move_speed: 250.0,
@@ -138,14 +148,14 @@ impl GameplayState {
                 entity: player_entity
             })
             .with(Cannon {
-                x_offset: 0.0,
-                y_offset: 16.0,
+                x_offset: missile_x_offset,
+                y_offset: missile_y_offset,
                 attack_cooldown: 0.5,
                 last_attack_time: 0.0,
-                missile_width: 1.0,
-                missile_height: 8.0,
+                missile_width: missile_width,
+                missile_height: missile_height,
                 missile_speed: 500.0,
-                missile_sprite_index: 5
+                missile_sprite_index: 13
             })
             .build();
     }
