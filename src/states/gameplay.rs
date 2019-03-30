@@ -83,6 +83,7 @@ impl GameplayState {
         dispatcher_builder.add(systems::EnemySpawnerSystem::default(), "enemy_spawner", &["destroy_out_of_arena_system"]);
         dispatcher_builder.add(systems::ClearCannonsSystem, "clear_cannons", &["kill_system", "destroy_out_of_arena_system"]);
         dispatcher_builder.add(systems::DeleteEntitiesSystem, "delete_entities", &["clear_cannons"]);
+        dispatcher_builder.add(systems::UiSystem, "ui", &["kill_system"]);
 
         let mut dispatcher = dispatcher_builder.build();
         dispatcher.setup(&mut world.res);

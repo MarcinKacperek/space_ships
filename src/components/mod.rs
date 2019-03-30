@@ -41,7 +41,7 @@ impl Killable {
         self.health = self.health - 1;
     }
 
-    pub fn get_health(&mut self) -> i32 {
+    pub fn get_health(&self) -> i32 {
         return self.health;
     }
 

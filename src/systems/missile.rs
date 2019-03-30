@@ -3,12 +3,10 @@ use amethyst::{
     ecs::{
         Join,
         Entities,
-        ReadExpect,
         ReadStorage,
         WriteStorage,
         System,
-    },
-    ui::UiText
+    }
 };
 use crate::{
     components::{
@@ -21,7 +19,6 @@ use crate::{
             PlayerShipTag
         }
     },
-    resources::UiGameplayElements,
     utils
 };
 
@@ -36,8 +33,6 @@ impl<'s> System<'s> for MissileSystem {
         ReadStorage<'s, PlayerShipTag>,
         ReadStorage<'s, EnemyTag>,
         WriteStorage<'s, DeleteEntityTag>,
-        WriteStorage<'s, UiText>,
-        ReadExpect<'s, UiGameplayElements>,
         Entities<'s>
     );
 
@@ -51,8 +46,6 @@ impl<'s> System<'s> for MissileSystem {
             player_ship_tags, 
             enemy_tags, 
             mut delete_entity_tags,
-            mut ui_texts, 
-            ui_elements, 
             entities
         ): Self::SystemData
     ) {
@@ -84,9 +77,6 @@ impl<'s> System<'s> for MissileSystem {
                         utils::is_aabb_collide(missile_rect, missile_transform, player_rect, player_transform)
                     {
                         player_killable.deal_damage();
-                        if let Some(text) = ui_texts.get_mut(ui_elements.life_value_text) {
-                            text.text = player_killable.get_health().to_string();
-                        }
 
                         let _ = delete_entity_tags.insert(missile_entity, DeleteEntityTag);
                     }
