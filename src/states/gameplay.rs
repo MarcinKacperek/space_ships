@@ -76,14 +76,15 @@ impl GameplayState {
         dispatcher_builder.add(systems::PlayerShipSystem, "player_ship_system", &[]);
         dispatcher_builder.add(systems::MovementSystem, "movement_system", &["player_ship_system"]);
         dispatcher_builder.add(systems::ShootingSystem, "shooting_system", &["player_ship_system"]);
-        dispatcher_builder.add(systems::MissileSystem, "missile_system", &["movement_system", "shooting_system"]);
         dispatcher_builder.add(systems::BoundInArenaSystem, "bound_in_arena_system", &["movement_system"]);
         dispatcher_builder.add(systems::DestroyOutOfArenaSystem, "destroy_out_of_arena_system", &["bound_in_arena_system"]);
+        dispatcher_builder.add(systems::MissileSystem, "missile_system", &["movement_system", "shooting_system"]);
         dispatcher_builder.add(systems::KillSystem, "kill_system", &["missile_system"]);
+        dispatcher_builder.add(systems::EnemyCollisionSystem, "enemy_collision", &["kill_system"]);
         dispatcher_builder.add(systems::EnemySpawnerSystem::default(), "enemy_spawner", &["destroy_out_of_arena_system"]);
-        dispatcher_builder.add(systems::ClearCannonsSystem, "clear_cannons", &["kill_system", "destroy_out_of_arena_system"]);
+        dispatcher_builder.add(systems::ClearCannonsSystem, "clear_cannons", &["enemy_collision", "destroy_out_of_arena_system"]);
         dispatcher_builder.add(systems::DeleteEntitiesSystem, "delete_entities", &["clear_cannons"]);
-        dispatcher_builder.add(systems::UiSystem, "ui", &["kill_system"]);
+        dispatcher_builder.add(systems::UiSystem, "ui", &["enemy_collision"]);
 
         let mut dispatcher = dispatcher_builder.build();
         dispatcher.setup(&mut world.res);
