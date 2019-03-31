@@ -24,7 +24,10 @@ pub struct UiAssets {
     font: Handle<FontAsset>,
     btn_img: Handle<Texture>,
     btn_hover_img: Handle<Texture>,
-    life_img: Handle<Texture>
+    life_img: Handle<Texture>,
+    health_bar_border_img: Handle<Texture>,
+    health_bar_green_img: Handle<Texture>,
+    health_bar_red_img: Handle<Texture>
 }
 
 impl UiAssets {
@@ -33,13 +36,19 @@ impl UiAssets {
         font: Handle<FontAsset>,
         btn_img: Handle<Texture>,
         btn_hover_img: Handle<Texture>,
-        life_img: Handle<Texture>
+        life_img: Handle<Texture>,
+        health_bar_border_img: Handle<Texture>,
+        health_bar_green_img: Handle<Texture>,
+        health_bar_red_img: Handle<Texture>
     ) -> Self {
         return UiAssets {
             font,
             btn_img,
             btn_hover_img,
-            life_img
+            life_img,
+            health_bar_border_img,
+            health_bar_green_img,
+            health_bar_red_img
         };
     }
 
@@ -57,6 +66,18 @@ impl UiAssets {
 
     pub fn get_life_img(&self) -> Handle<Texture> {
         return self.life_img.clone();
+    }
+
+    pub fn get_health_bar_border_img(&self) -> Handle<Texture> {
+        return self.health_bar_border_img.clone();
+    }
+
+    pub fn get_health_bar_green_img(&self) -> Handle<Texture> {
+        return self.health_bar_green_img.clone();
+    }
+
+    pub fn get_health_bar_red_img(&self) -> Handle<Texture> {
+        return self.health_bar_red_img.clone();
     }
 
 }

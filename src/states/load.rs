@@ -93,12 +93,18 @@ impl LoadingState {
         let button_img = self.load_btn_img(world);
         let button_hover_img = self.load_btn_hover_img(world);
         let life_img = self.load_life_img(world);
+        let health_bar_border_img = self.load_health_bar_border_img(world);
+        let health_bar_green_img = self.load_health_bar_green_img(world);
+        let health_bar_red_img = self.load_health_bar_red_img(world);
 
         let ui_assets = UiAssets::new(
             font,
             button_img,
             button_hover_img,
-            life_img
+            life_img,
+            health_bar_border_img,
+            health_bar_green_img,
+            health_bar_red_img
         );
         world.add_resource(ui_assets);
     }
@@ -144,6 +150,42 @@ impl LoadingState {
             .read_resource::<Loader>()
             .load(
                 "assets/ui/life.png",
+                PngFormat,
+                TextureMetadata::srgb_scale(),
+                (),
+                &world.read_resource::<AssetStorage<Texture>>()
+            );
+    }
+
+    fn load_health_bar_border_img(&mut self, world: &mut World) -> Handle<Texture> {
+        return world
+            .read_resource::<Loader>()
+            .load(
+                "assets/ui/health_bar_border.png",
+                PngFormat,
+                TextureMetadata::srgb_scale(),
+                (),
+                &world.read_resource::<AssetStorage<Texture>>()
+            );
+    }
+
+    fn load_health_bar_green_img(&mut self, world: &mut World) -> Handle<Texture> {
+        return world
+            .read_resource::<Loader>()
+            .load(
+                "assets/ui/health_bar_green.png",
+                PngFormat,
+                TextureMetadata::srgb_scale(),
+                (),
+                &world.read_resource::<AssetStorage<Texture>>()
+            );
+    }
+
+    fn load_health_bar_red_img(&mut self, world: &mut World) -> Handle<Texture> {
+        return world
+            .read_resource::<Loader>()
+            .load(
+                "assets/ui/health_bar_red.png",
                 PngFormat,
                 TextureMetadata::srgb_scale(),
                 (),

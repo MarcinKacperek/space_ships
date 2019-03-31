@@ -2,11 +2,13 @@ use amethyst::{
     core::nalgebra::Vector2,
     ecs::{
         Component,
-        DenseVecStorage
+        DenseVecStorage,
+        world::Index
     }
 };
 
 pub mod tags;
+pub mod ui;
 
 pub struct Rect {
     pub width: f32,
@@ -27,18 +29,26 @@ impl Component for Moveable {
 }
 
 pub struct Killable {
-    health: i32
+    health: i32,
+    max_health: i32,
+    pub health_bar_entity_index: Option<Index>
 }
 
 impl Killable {
-    pub fn new(health: i32) -> Self {
+    pub fn new(max_health: i32) -> Self {
         return Self {
-            health
+            health: max_health,
+            max_health: max_health,
+            health_bar_entity_index: None
         };
     }
 
     pub fn deal_damage(&mut self) {
         self.health = self.health - 1;
+    }
+
+    pub fn get_max_health(&self) -> i32 {
+        return self.max_health;
     }
 
     pub fn get_health(&self) -> i32 {
@@ -48,6 +58,7 @@ impl Killable {
     pub fn is_alive(&self) -> bool {
         return self.health > 0;
     }
+
 }
 
 impl Component for Killable {
