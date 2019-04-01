@@ -66,7 +66,8 @@ impl Component for Killable {
 }
 
 pub struct SpaceShip {
-    pub is_attacking: bool
+    pub is_attacking: bool,
+    pub cannon_entities_indices: Vec<Index> 
 }
 
 impl Component for SpaceShip {

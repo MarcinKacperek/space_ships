@@ -1,4 +1,5 @@
 mod clear_cannons;
+mod clear_children;
 mod bound_in_arena;
 mod delete_entities;
 mod destroy_out_of_arena;
@@ -14,6 +15,7 @@ mod ui;
 pub use {
     clear_cannons::ClearCannonsSystem,
     bound_in_arena::BoundInArenaSystem,
+    clear_children::ClearChildrenSystem,
     delete_entities::DeleteEntitiesSystem,
     destroy_out_of_arena::DestroyOutOfArenaSystem,
     enemy_collision::EnemyCollisionSystem,

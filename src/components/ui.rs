@@ -14,4 +14,3 @@ pub struct UiKillable {
 impl Component for UiKillable {
     type Storage = DenseVecStorage<Self>;
 }
-

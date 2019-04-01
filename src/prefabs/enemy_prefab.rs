@@ -141,11 +141,12 @@ impl<'a> SimplePrefab<'a> for EnemyPrefabData {
             .expect("Could not create SpriteRender!");
         space_ships
             .insert(enemy_entity, SpaceShip {
-                is_attacking: true
+                is_attacking: true,
+                cannon_entities_indices: Vec::new()
             })
             .expect("Could not create SpaceShip!");
 
-
+        let enemy_space_ship = space_ships.get_mut(enemy_entity).unwrap();
         // Create cannons
         if let Some(cannon_prefabs) = &self.cannon_prefabs {
             let attack_cooldown = self.attack_cooldown
@@ -153,6 +154,7 @@ impl<'a> SimplePrefab<'a> for EnemyPrefabData {
 
             for cannon_prefab in cannon_prefabs {
                 let cannon_entity = entities.create();
+                enemy_space_ship.cannon_entities_indices.push(cannon_entity.id());
                 cannons
                     .insert(cannon_entity, Cannon {
                         x_offset: cannon_prefab.x_offset,

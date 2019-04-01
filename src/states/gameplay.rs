@@ -7,7 +7,7 @@ use amethyst::{
     },
     ecs::{
         Dispatcher,
-        DispatcherBuilder,
+        DispatcherBuilder
     },
     input,
     prelude::*,
@@ -82,8 +82,9 @@ impl GameplayState {
         dispatcher_builder.add(systems::KillSystem, "kill_system", &["missile_system"]);
         dispatcher_builder.add(systems::EnemyCollisionSystem, "enemy_collision", &["kill_system"]);
         dispatcher_builder.add(systems::EnemySpawnerSystem::default(), "enemy_spawner", &["destroy_out_of_arena_system"]);
-        dispatcher_builder.add(systems::ClearCannonsSystem, "clear_cannons", &["enemy_collision", "destroy_out_of_arena_system"]);
-        dispatcher_builder.add(systems::DeleteEntitiesSystem, "delete_entities", &["clear_cannons"]);
+        // dispatcher_builder.add(systems::ClearCannonsSystem, "clear_cannons", &["enemy_collision", "destroy_out_of_arena_system"]);
+        dispatcher_builder.add(systems::ClearChildrenSystem, "clear_children", &["enemy_collision", "destroy_out_of_arena_system"]);
+        dispatcher_builder.add(systems::DeleteEntitiesSystem, "delete_entities", &["clear_children"]);
         dispatcher_builder.add(systems::UiSystem, "ui", &["enemy_collision"]);
 
         let mut dispatcher = dispatcher_builder.build();
@@ -141,10 +142,11 @@ impl GameplayState {
             })
             .with(Killable::new(3))
             .with(SpaceShip {
-                is_attacking: false
+                is_attacking: false,
+                cannon_entities_indices: Vec::new()
             })
             .build();
-        world
+        let cannon_entity = world
             .create_entity()
             .with(Parent {
                 entity: player_entity
@@ -160,6 +162,10 @@ impl GameplayState {
                 missile_sprite_index: 13
             })
             .build();
+
+        let mut space_ship_storage = world.write_storage::<SpaceShip>();
+        let player_space_ship = space_ship_storage.get_mut(player_entity).unwrap();
+        player_space_ship.cannon_entities_indices.push(cannon_entity.id());
     }
 
     fn initialise_camera(world: &mut World) {
