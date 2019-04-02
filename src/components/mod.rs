@@ -31,15 +31,17 @@ impl Component for Moveable {
 pub struct Killable {
     health: i32,
     max_health: i32,
+    points: i32,
     drops_health: bool,
     pub health_bar_entity_index: Option<Index>
 }
 
 impl Killable {
-    pub fn new_enemy(max_health: i32, drops_health: bool) -> Self {
+    pub fn new_enemy(max_health: i32, drops_health: bool, points: i32) -> Self {
         return Self {
             health: max_health,
             max_health: max_health,
+            points: points,
             drops_health: drops_health,
             health_bar_entity_index: None
         };
@@ -49,6 +51,7 @@ impl Killable {
         return Self {
             health: health,
             max_health: max_health,
+            points: 0,
             drops_health: false,
             health_bar_entity_index: None
         };
@@ -74,6 +77,10 @@ impl Killable {
 
     pub fn is_alive(&self) -> bool {
         return self.health > 0;
+    }
+
+    pub fn get_points(&self) -> i32 {
+        return self.points;
     }
 
     pub fn is_drops_health(&self) -> bool {

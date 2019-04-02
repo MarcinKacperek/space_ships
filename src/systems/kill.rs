@@ -124,8 +124,7 @@ impl<'s> System<'s> for KillSystem {
         for (killable, entity) in (&mut killables, &entities).join() {
             if !delete_entity_tags.contains(entity) && !killable.is_alive() {
                 if !player_ship_tags.contains(entity) {
-                    // TODO add score to enemy
-                    session_data.score += 1;
+                    session_data.score += killable.get_points();
                     if killable.is_drops_health() {
                         KillSystem::drop_pickup(
                             entity,
