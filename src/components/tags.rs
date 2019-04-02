@@ -37,3 +37,10 @@ pub struct DeleteEntityTag;
 impl Component for DeleteEntityTag {
     type Storage = NullStorage<Self>;
 }
+
+#[derive(Default)]
+pub struct HealthPickupTag;
+
+impl Component for HealthPickupTag {
+    type Storage = NullStorage<Self>;
+}

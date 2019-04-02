@@ -31,20 +31,37 @@ impl Component for Moveable {
 pub struct Killable {
     health: i32,
     max_health: i32,
+    drops_health: bool,
     pub health_bar_entity_index: Option<Index>
 }
 
 impl Killable {
-    pub fn new(max_health: i32) -> Self {
+    pub fn new_enemy(max_health: i32, drops_health: bool) -> Self {
         return Self {
             health: max_health,
             max_health: max_health,
+            drops_health: drops_health,
+            health_bar_entity_index: None
+        };
+    }
+
+    pub fn new_player(max_health: i32, health: i32) -> Self {
+        return Self {
+            health: health,
+            max_health: max_health,
+            drops_health: false,
             health_bar_entity_index: None
         };
     }
 
     pub fn deal_damage(&mut self) {
-        self.health = self.health - 1;
+        self.health -= 1;
+    }
+
+    pub fn gain_health(&mut self) {
+        if self.health < self.max_health {
+            self.health += 1;
+        }
     }
 
     pub fn get_max_health(&self) -> i32 {
@@ -57,6 +74,10 @@ impl Killable {
 
     pub fn is_alive(&self) -> bool {
         return self.health > 0;
+    }
+
+    pub fn is_drops_health(&self) -> bool {
+        return self.drops_health;
     }
 
 }
@@ -105,5 +126,27 @@ pub struct Cannon {
 }
 
 impl Component for Cannon {
+    type Storage = DenseVecStorage<Self>;
+}
+
+pub struct Expire {
+    expires_at_time: f64
+}
+
+impl Expire {
+
+    pub fn new(lifetime_seconds: f64, current_time: f64) -> Self {
+        Self {
+            expires_at_time: current_time + lifetime_seconds
+        }
+    }
+
+    pub fn is_expired(&self, current_time: f64) -> bool {
+        return current_time >= self.expires_at_time;
+    }
+
+}
+
+impl Component for Expire {
     type Storage = DenseVecStorage<Self>;
 }

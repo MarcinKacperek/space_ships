@@ -109,6 +109,12 @@
             y: 80,
             width: 13,
             height: 37
+        ),
+        (
+            x: 0,
+            y: 137,
+            width: 32,
+            height: 30
         )
     ]
 )

@@ -50,6 +50,7 @@ pub struct EnemyPrefabData {
     pub height: f32,
     pub scale: f32,
     pub health: i32,
+    pub drops_health: bool,
     pub attack_cooldown: Option<f64>,
     pub cannon_prefabs: Option<Vec<CannonPrefabData>>
 }
@@ -125,7 +126,7 @@ impl<'a> SimplePrefab<'a> for EnemyPrefabData {
             })
             .expect("Could not create Moveable!");
         killables
-            .insert(enemy_entity, Killable::new(self.health))
+            .insert(enemy_entity, Killable::new_enemy(self.health, self.drops_health))
             .expect("Could not create Killable!");
         enemy_tags
             .insert(enemy_entity, EnemyTag)

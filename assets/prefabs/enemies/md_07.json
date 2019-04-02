@@ -6,6 +6,7 @@
     "height": 80.0,
     "scale": 0.4,
     "health": 2,
+    "drops_health": false,
     "attack_cooldown": 3.5,
     "cannon_prefabs": [
         {

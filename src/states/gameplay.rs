@@ -73,7 +73,8 @@ impl GameplayState {
     fn initialise_dispatcher(&mut self, world: &mut World) {
         let mut dispatcher_builder = DispatcherBuilder::new();
 
-        dispatcher_builder.add(systems::PlayerShipSystem, "player_ship_system", &[]);
+        dispatcher_builder.add(systems::ExpireSystem, "expire", &[]);
+        dispatcher_builder.add(systems::PlayerShipSystem, "player_ship_system", &["expire"]);
         dispatcher_builder.add(systems::MovementSystem, "movement_system", &["player_ship_system"]);
         dispatcher_builder.add(systems::ShootingSystem, "shooting_system", &["player_ship_system"]);
         dispatcher_builder.add(systems::BoundInArenaSystem, "bound_in_arena_system", &["movement_system"]);
@@ -81,10 +82,10 @@ impl GameplayState {
         dispatcher_builder.add(systems::MissileSystem, "missile_system", &["movement_system", "shooting_system"]);
         dispatcher_builder.add(systems::KillSystem, "kill_system", &["missile_system"]);
         dispatcher_builder.add(systems::EnemyCollisionSystem, "enemy_collision", &["kill_system"]);
+        dispatcher_builder.add(systems::PickupsSystem, "pickup", &["enemy_collision"]);
         dispatcher_builder.add(systems::EnemySpawnerSystem::default(), "enemy_spawner", &["destroy_out_of_arena_system"]);
-        // dispatcher_builder.add(systems::ClearCannonsSystem, "clear_cannons", &["enemy_collision", "destroy_out_of_arena_system"]);
-        dispatcher_builder.add(systems::ClearChildrenSystem, "clear_children", &["enemy_collision", "destroy_out_of_arena_system"]);
-        dispatcher_builder.add(systems::DeleteEntitiesSystem, "delete_entities", &["clear_children"]);
+        dispatcher_builder.add(systems::ClearChildrenSystem, "clear_children", &["pickup", "enemy_collision", "destroy_out_of_arena_system"]);
+        dispatcher_builder.add(systems::DeleteEntitiesSystem, "delete_entities", &["expire", "clear_children"]);
         dispatcher_builder.add(systems::UiSystem, "ui", &["enemy_collision"]);
 
         let mut dispatcher = dispatcher_builder.build();
@@ -140,7 +141,7 @@ impl GameplayState {
                 move_speed: 250.0,
                 direction: Vector2::new(0.0, 0.0)
             })
-            .with(Killable::new(3))
+            .with(Killable::new_player(5, 3))
             .with(SpaceShip {
                 is_attacking: false,
                 cannon_entities_indices: Vec::new()

@@ -100,7 +100,7 @@ impl UiSystem {
                     Anchor::BottomLeft,
                     0.0,
                     0.0,
-                    1.0,
+                    0.0,
                     rect.width,
                     10.0,
                     1

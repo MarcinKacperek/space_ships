@@ -37,6 +37,7 @@ impl ResultState {
 
         let resume_button = UiButtonBuilder::new("restart_btn", "Restart")
             .with_position(x, y)
+            .with_layer(10.0)
             .with_size(constants::UI_BUTTON_WIDTH, constants::UI_BUTTON_HEIGHT)
             .with_anchor(Anchor::Middle)
             .with_font(ui_assets.get_font())
@@ -49,6 +50,7 @@ impl ResultState {
 
         let main_menu_button = UiButtonBuilder::new("main_menu_btn", "Main Menu")
             .with_position(x, y - constants::UI_BUTTON_HEIGHT - constants::UI_BUTTON_HEIGHT / 4.0)
+            .with_layer(10.0)
             .with_size(constants::UI_BUTTON_WIDTH, constants::UI_BUTTON_HEIGHT)
             .with_anchor(Anchor::Middle)
             .with_font(ui_assets.get_font())
