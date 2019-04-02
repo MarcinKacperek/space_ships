@@ -65,8 +65,8 @@ impl KillSystem {
             .with(pickup_transform, transforms)
             .with(
                 Rect {
-                    width: 32.0,
-                    height: 30.0
+                    width: 33.0,
+                    height: 29.0
                 },
                 rects
             )

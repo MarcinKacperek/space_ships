@@ -293,8 +293,8 @@ impl GameplayState {
             55.0,
             25.0,
             1.0,
-            16.0,
-            16.0,
+            33.0,
+            26.0,
             1
         );
         let life_value_text = world
@@ -360,7 +360,7 @@ impl SimpleState for GameplayState {
         return Trans::None;
     }
 
-    fn update(&mut self, data: &mut StateData<GameData>) -> SimpleTrans {
+    fn fixed_update(&mut self, data: /*&mut*/ StateData<GameData>) -> SimpleTrans {
         {
             // Change state
             let mut gameplay_next_state = data.world.write_resource::<GameplayNextState>();

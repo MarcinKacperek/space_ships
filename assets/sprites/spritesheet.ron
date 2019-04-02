@@ -112,9 +112,9 @@
         ),
         (
             x: 0,
-            y: 137,
-            width: 32,
-            height: 30
+            y: 144,
+            width: 33,
+            height: 29
         )
     ]
 )
